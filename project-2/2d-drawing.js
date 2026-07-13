@@ -20,33 +20,33 @@ var sketch1 = function(p) {
   };
 
   p.draw = function() {
-    p.background(240, 235, 220);
+    p.background(3, 9, 29);
     p.noStroke();
 
     p.push();
     p.rectMode(p.CENTER);
     p.translate(180, 220);
     p.rotate(-0.18);
-    p.fill(255, 215, 0, 200);
+    p.fill(255, 247, 0, 220);
     p.rect(0, 0, 360, 180);
     p.pop();
 
     p.push();
-    p.fill(0, 80, 150, 200);
+    p.fill(0, 229, 255, 210);
     p.translate(360, 140);
     p.rotate(0.08);
     p.ellipse(0, 0, 240, 240);
     p.pop();
 
     p.push();
-    p.fill(210, 50, 45, 200);
+    p.fill(0, 140, 255, 205);
     p.translate(260, 260);
     p.rotate(0.06);
     p.triangle(-100, 80, 100, 80, 0, -140);
     p.pop();
 
     p.push();
-    p.fill(140, 80, 40, 200);
+    p.fill(122, 53, 255, 210);
     p.translate(520, 260);
     p.rotate(-0.12);
     p.rectMode(p.CENTER);

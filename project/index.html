@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapping My Weekly Rhythm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Orbitron:wght@500;700&amp;family=Roboto:wght@300;400;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="left">Columbia GSAPP</div>
+    <div class="center">Computational Design Workflows<br><span>Temporal Structures</span></div>
+    <div class="right"><a href="../index.html">Back to Archive</a></div>
+  </header>
+
+  <div class="foreground-city" aria-hidden="true"></div>
+
+  <main>
+    <div class="project-meta">Digital Object 02 · 2026</div>
+    <h1>Mapping My Weekly Rhythm</h1>
+
+    <section class="project-introduction">
+      <div class="text-block">
+        <h2>Digital Object 2: Temporal Structures</h2>
+        <p>This project maps a typical week as a temporal structure. Class meetings, commuting, meals, walking, museums, homework, exercise, entertainment time, and sleep are translated into visual data to show how a weekly rhythm is organized across repeated days.</p>
+      </div>
+
+      <div class="text-block">
+        <h2>Temporal Structure Description</h2>
+        <p>Beyond visualization, this temporal structure serves as a functional tool for my future projects. It enables me to optimize my time allocation by tracking the duration of specific tasks during different phases of a project, such as research, development, and testing. This approach helps identify bottlenecks and improves my workflow efficiency by providing a clear, measurable overview of how time is distributed across project milestones.</p>
+      </div>
+    </section>
+
+    <section class="chart-panel">
+      <h2>Weekly Schedule Gantt Chart</h2>
+      <p class="chart-description">This chart translates the week into horizontal time blocks. It shows how classes, homework, commuting, food, walking, exercise, museums, shopping, entertainment time, and sleep occupy different parts of each day.</p>
+      <div id="d3-container-1"></div>
+    </section>
+
+    <section class="chart-panel">
+      <h2>Time Category Summary</h2>
+      <p class="chart-description">This summary aggregates the schedule into total weekly hours by category, making the balance between study, sleep, movement, culture, care, and entertainment time easier to compare.</p>
+      <div id="d3-container-2"></div>
+    </section>
+
+    <section class="chart-panel">
+      <h2>Daily Energy Heatmap</h2>
+      <p class="chart-description">This heatmap reads the same week as a field of energy and intensity. Darker cells indicate periods of higher focus, movement, or pressure, while lighter cells show rest, transition, or lower-intensity time.</p>
+      <div class="energy-legend" aria-label="Energy level color legend">
+        <div class="legend-item"><span class="legend-swatch energy-low"></span><span>Low Energy · Deep Navy Blue</span></div>
+        <div class="legend-item"><span class="legend-swatch energy-mid-low"></span><span>Lower-Mid Energy · Neon Blue</span></div>
+        <div class="legend-item"><span class="legend-swatch energy-mid-high"></span><span>Upper-Mid Energy · Electric Cyan</span></div>
+        <div class="legend-item"><span class="legend-swatch energy-high"></span><span>High Energy · Neon Yellow</span></div>
+        <div class="legend-item legend-hover"><span class="legend-swatch energy-hover"></span><span>Hover Effect · Yellow and Blue Dual Glow</span></div>
+      </div>
+      <div id="d3-container-3"></div>
+    </section>
+  </main>
+
+  <script src="weekly-rhythm.js"></script>
+</body>
+</html>

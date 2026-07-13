@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple Canvases</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Orbitron:wght@500;700&amp;family=Roboto:wght@300;400;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+  <header>
+    <div class="left">Columbia GSAPP</div>
+    <div class="center">Computational Design Workflows<br><span>Exploration of Digital Objects</span></div>
+    <div class="right"><a href="../index.html">Back to Archive</a></div>
+  </header>
+
+  <div class="foreground-city" aria-hidden="true"></div>
+
+  <main>
+    <div class="project-meta">Digital Object · 2026</div>
+    <h1>Multiple Canvases</h1>
+    <div class="project-byline">Jay Shang · Computational Design Workflows</div>
+
+    <section class="project-introduction single-column">
+      <div class="text-block">
+        <h2>2D Studies</h2>
+        <p>Two p5.js studies combining geometric composition, layered color, motion, and cursor interaction.</p>
+      </div>
+    </section>
+
+    <section class="canvas-panel">
+      <h2>Static Study: Folded Field</h2>
+      <p class="canvas-description">A static spatial drawing built from primitive shapes and color blocks.</p>
+      <div id="canvas-container-1" class="canvas-container"></div>
+    </section>
+
+    <section class="canvas-panel">
+      <h2>Interactive Study: Signal Garden</h2>
+      <p class="canvas-description">An animated drawing where particles orbit through a gridded landscape and respond to the mouse.</p>
+      <div id="canvas-container-2" class="canvas-container"></div>
+    </section>
+
+    <section class="project-introduction single-column">
+      <div class="text-block">
+        <h2>3D Studies</h2>
+        <p>Two Three.js scenes exploring light, depth, and spatial composition in 3D.</p>
+      </div>
+    </section>
+
+    <section class="canvas-panel">
+      <h2>Cyberpunk City Blocks</h2>
+      <p class="canvas-description">A navigable neon city composed of towers, illuminated windows, intersecting streets, road markings, and glowing urban infrastructure.</p>
+      <div id="threejs-container-1" class="canvas-container"></div>
+    </section>
+
+    <section class="canvas-panel">
+      <h2>Atmospheric Geometry</h2>
+      <p class="canvas-description">A layered field of UCLA and Columbia identity panels using fog, neon light, depth, and material contrast.</p>
+      <div id="threejs-container-3" class="canvas-container"></div>
+    </section>
+  </main>
+
+  <script src="2d-drawing.js"></script>
+  <script src="bouncing-ball.js"></script>
+  <script src="3d-primitive.js"></script>
+  <script src="atmospheric-geometry.js"></script>
+</body>
+</html>

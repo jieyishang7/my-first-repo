@@ -47,7 +47,7 @@ var sketch2 = function(p) {
   }
 
   function drawGrid() {
-    p.stroke(255, 240, 210, 36);
+    p.stroke(0, 229, 255, 46);
     p.strokeWeight(1);
     for (var i = 0; i <= columns; i++) {
       var x = p.map(i, 0, columns, 40, p.width - 40);
@@ -60,7 +60,14 @@ var sketch2 = function(p) {
 
   function drawParticles() {
     var mouseInfluence = p.dist(p.mouseX, p.mouseY, p.width / 2, p.height / 2);
-    var hueShift = p.map(mouseInfluence, 0, p.width / 2, 0, 80, true);
+    var colorShift = p.map(mouseInfluence, 0, p.width / 2, 0, 1, true);
+    var pulse = (p.sin(p.frameCount * 0.018) + 1) * 0.5;
+    var outerStart = p.color(255, 247, 0, 175);
+    var outerEnd = p.color(0, 140, 255, 175);
+    var innerStart = p.color(0, 229, 255, 235);
+    var innerEnd = p.color(122, 53, 255, 235);
+    var outerColor = p.lerpColor(outerStart, outerEnd, colorShift);
+    var innerColor = p.lerpColor(innerStart, innerEnd, p.constrain(colorShift * 0.7 + pulse * 0.3, 0, 1));
 
     p.noStroke();
     for (var i = 0; i < particles.length; i++) {
@@ -73,9 +80,9 @@ var sketch2 = function(p) {
       var y = particle.baseY + p.sin(particle.angle * 1.4) * particle.orbit * 0.35;
       var size = particle.size * p.map(pull, 0, 300, 1.7, 0.75, true);
 
-      p.fill(240, 197 - hueShift, 92 + hueShift, 155);
+      p.fill(outerColor);
       p.circle(x, y, size * 2.2);
-      p.fill(96 + hueShift, 188, 198, 230);
+      p.fill(innerColor);
       p.circle(x, y, size);
     }
   }
@@ -85,18 +92,22 @@ var sketch2 = function(p) {
     var my = p.constrain(p.mouseY, 0, p.height);
 
     p.noFill();
-    p.stroke(248, 238, 213, 170);
+    var cursorShift = p.map(mx, 0, p.width, 0, 1, true);
+    var ringColor = p.lerpColor(p.color(0, 229, 255, 190), p.color(122, 53, 255, 190), cursorShift);
+    var crossColor = p.lerpColor(p.color(255, 247, 0, 225), p.color(0, 229, 255, 225), cursorShift);
+
+    p.stroke(ringColor);
     p.strokeWeight(2);
     p.circle(mx, my, 70);
     p.circle(mx, my, 120);
 
-    p.stroke(226, 80, 62, 200);
+    p.stroke(crossColor);
     p.strokeWeight(4);
     p.line(mx - 28, my, mx + 28, my);
     p.line(mx, my - 28, mx, my + 28);
 
     p.noStroke();
-    p.fill(248, 238, 213);
+    p.fill(0, 229, 255);
     p.textSize(12);
     p.text('move cursor to bend the field', 42, p.height - 24);
   }
