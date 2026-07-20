@@ -1,0 +1,111 @@
+source,target,value,type
+NYC Museum Culture,MoMA,10,hierarchy
+NYC Museum Culture,The Met,10,hierarchy
+NYC Museum Culture,Whitney,10,hierarchy
+NYC Museum Culture,Guggenheim,10,hierarchy
+NYC Museum Culture,New Museum,10,hierarchy
+MoMA,Modernism,10,collection
+The Met,Modernism,8,collection
+MoMA,Contemporary,10,collection
+Whitney,Contemporary,8,collection
+The Met,Abstract Expressionism,5,academic
+MoMA,Abstract Expressionism,10,collection
+New Museum,Contemporary,10,collection
+Guggenheim,Modernism,8,collection
+MoMA,Midtown,10,spatial
+The Met,Upper East Side,10,spatial
+Whitney,Midtown,5,spatial
+Guggenheim,Upper East Side,10,spatial
+MoMA,Yoshio Taniguchi,10,intervention
+The Met,Richard Morris Hunt,10,intervention
+Whitney,Renzo Piano,10,intervention
+Guggenheim,Frank Lloyd Wright,10,intervention
+New Museum,SANAA,10,intervention
+The Met,Contemporary,3,academic
+MoMA,The Met,7,institutional
+MoMA,Whitney,8,institutional
+Modernism,Abstract Expressionism,9,evolution
+Modernism,Contemporary,6,evolution
+MoMA,Jackson Pollock,10,artist
+The Met,Jackson Pollock,8,artist
+Whitney,Jackson Pollock,7,artist
+Guggenheim,Jackson Pollock,9,artist
+MoMA,Mark Rothko,9,artist
+The Met,Mark Rothko,8,artist
+Whitney,Mark Rothko,8,artist
+Guggenheim,Mark Rothko,8,artist
+MoMA,Andy Warhol,10,artist
+The Met,Andy Warhol,6,artist
+Whitney,Andy Warhol,10,artist
+MoMA,Pablo Picasso,10,artist
+The Met,Pablo Picasso,9,artist
+Guggenheim,Pablo Picasso,8,artist
+MoMA,Cindy Sherman,8,artist
+The Met,Cindy Sherman,7,artist
+Whitney,Cindy Sherman,9,artist
+New Museum,Cindy Sherman,7,exhibition
+Jackson Pollock,Abstract Expressionism,10,lineage
+Mark Rothko,Abstract Expressionism,10,lineage
+Andy Warhol,Contemporary,8,lineage
+Pablo Picasso,Modernism,10,lineage
+Cindy Sherman,Contemporary,9,lineage
+MoMA,Willem de Kooning,10,artist
+The Met,Willem de Kooning,8,artist
+Whitney,Willem de Kooning,9,artist
+Guggenheim,Willem de Kooning,8,artist
+Willem de Kooning,Abstract Expressionism,10,lineage
+MoMA,Jasper Johns,9,artist
+The Met,Jasper Johns,7,artist
+Whitney,Jasper Johns,10,artist
+Guggenheim,Jasper Johns,8,artist
+Jasper Johns,Contemporary,8,lineage
+MoMA,Louise Bourgeois,9,artist
+The Met,Louise Bourgeois,8,artist
+Whitney,Louise Bourgeois,7,artist
+Guggenheim,Louise Bourgeois,8,artist
+Louise Bourgeois,Contemporary,8,lineage
+MoMA,Georgia O'Keeffe,8,artist
+The Met,Georgia O'Keeffe,9,artist
+Whitney,Georgia O'Keeffe,10,artist
+Georgia O'Keeffe,Modernism,9,lineage
+MoMA,Robert Rauschenberg,10,artist
+The Met,Robert Rauschenberg,8,artist
+Whitney,Robert Rauschenberg,9,artist
+Guggenheim,Robert Rauschenberg,8,artist
+Robert Rauschenberg,Contemporary,9,lineage
+MoMA,Pop Art,10,collection
+The Met,Pop Art,6,academic
+Whitney,Pop Art,10,collection
+Guggenheim,Pop Art,7,collection
+Andy Warhol,Pop Art,10,lineage
+Jasper Johns,Pop Art,8,lineage
+MoMA,Neo-Dada,9,collection
+Whitney,Neo-Dada,9,collection
+Guggenheim,Neo-Dada,7,academic
+Jasper Johns,Neo-Dada,10,lineage
+Robert Rauschenberg,Neo-Dada,10,lineage
+MoMA,Cubism,10,collection
+The Met,Cubism,8,collection
+Guggenheim,Cubism,8,collection
+Pablo Picasso,Cubism,10,lineage
+New Museum,Feminist Art,9,collection
+Whitney,Feminist Art,9,collection
+MoMA,Feminist Art,6,academic
+Cindy Sherman,Feminist Art,10,lineage
+Louise Bourgeois,Feminist Art,9,lineage
+New Museum,Postmodernism,10,collection
+Whitney,Postmodernism,8,collection
+MoMA,Postmodernism,7,academic
+Cindy Sherman,Postmodernism,10,lineage
+Robert Rauschenberg,Postmodernism,7,lineage
+MoMA,American Modernism,9,collection
+The Met,American Modernism,9,collection
+Whitney,American Modernism,10,collection
+Georgia O'Keeffe,American Modernism,10,lineage
+Modernism,Cubism,9,evolution
+Modernism,American Modernism,9,evolution
+Abstract Expressionism,Neo-Dada,8,evolution
+Neo-Dada,Pop Art,10,evolution
+Pop Art,Postmodernism,8,evolution
+Contemporary,Feminist Art,8,evolution
+Postmodernism,Contemporary,9,evolution

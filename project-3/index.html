@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A force-directed study of curatorial overlap across New York art institutions.">
+  <title>Relational Structures — NYC Museum Culture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Orbitron:wght@500;700&amp;family=Roboto:wght@300;400;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="network-data.js"></script>
+</head>
+<body>
+  <header>
+    <div class="left">Columbia GSAPP</div>
+    <div class="center">Computational Design Workflows<br><span>Relational Structures</span></div>
+    <div class="right"><a href="../index.html">Back to Archive</a></div>
+  </header>
+
+  <div class="foreground-city" aria-hidden="true"></div>
+
+  <main>
+    <div class="project-meta">Digital Object 03 · 2026</div>
+    <h1>NYC Museum Culture</h1>
+    <div class="project-byline">Jay Shang · Computational Design Workflows</div>
+
+    <section class="project-introduction single-column">
+      <div class="text-block">
+        <h2>Relational Structures</h2>
+        <p>A force-directed cultural topography mapping connections among New York museums, curatorial movements, shared artists, geographic contexts, and architectural interventions.</p>
+      </div>
+    </section>
+
+    <section class="network-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>New York Cultural Topography</h2>
+          <p class="network-description">Drag to reorganize · Hover to trace connections · Click a node to reveal labels</p>
+        </div>
+        <div class="framework" aria-label="Analytical framework">
+          <span>01 Curatorial authority</span>
+          <span>02 Geographical anchoring</span>
+          <span>03 Architectural evolution</span>
+        </div>
+      </div>
+
+      <div class="network-stage">
+        <div id="network" aria-label="Force-directed network connecting New York art institutions and curatorial movements"></div>
+        <aside class="legend" aria-label="Network legend">
+          <div><span class="legend-dot core-dot"></span>Cultural system</div>
+          <div><span class="legend-dot institution-dot"></span>Institution</div>
+          <div><span class="legend-dot movement-dot"></span>Curatorial movement</div>
+          <div><span class="legend-dot artist-dot"></span>Shared artist</div>
+          <div><span class="legend-dot context-dot"></span>Spatial / architectural context</div>
+          <div class="legend-rule"><span class="rule solid-rule"></span>Collection / geographic anchor</div>
+          <div class="legend-rule"><span class="rule dashed-rule"></span>Institutional / architectural exchange</div>
+          <div class="legend-rule"><span class="rule evolution-rule"></span>Conceptual evolution</div>
+          <p>Dates indicate founding, emergence, birth, or architectural completion.</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="graph-from-csv.js"></script>
+</body>
+</html>
