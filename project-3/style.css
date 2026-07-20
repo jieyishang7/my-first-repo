@@ -360,6 +360,10 @@ svg .grid line { stroke: rgba(0,229,255,.12) !important; }
   animation-play-state: paused;
 }
 
+.node-anchor:focus {
+  outline: none;
+}
+
 .node-float {
   transform-box: fill-box;
   transform-origin: center;
