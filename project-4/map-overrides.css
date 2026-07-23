@@ -18,3 +18,53 @@
   background: #b44cff;
   box-shadow: 0 0 12px #b44cff;
 }
+
+.map-stage::before {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  content: "";
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 229, 255, .025) 0,
+    rgba(0, 229, 255, .025) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  pointer-events: none;
+}
+
+.map-stage::after {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  content: "";
+  box-shadow:
+    inset 0 0 32px rgba(0, 229, 255, .12),
+    inset 0 0 90px rgba(122, 53, 255, .12);
+  pointer-events: none;
+}
+
+.restaurant-point {
+  filter: drop-shadow(0 0 4px currentColor);
+  animation: signal-pulse 2.8s ease-in-out infinite;
+}
+
+.filter-button,
+.map-controls button {
+  text-shadow: 0 0 9px currentColor;
+}
+
+.district-info,
+.map-index {
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+}
+
+@keyframes signal-pulse {
+  0%, 100% { opacity: .88; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .restaurant-point { animation: none; }
+}

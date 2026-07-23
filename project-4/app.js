@@ -24,6 +24,7 @@ const districts = districtLayer.selectAll('path').data(window.MANHATTAN_DATA.fea
 
 const points = pointLayer.selectAll('circle').data(restaurants).join('circle').attr('class','restaurant-point').attr('r',5)
   .attr('fill',d=>d.type==='steakhouse'?'#eaff00':'#b44cff')
+  .style('color',d=>d.type==='steakhouse'?'#eaff00':'#b44cff')
   .on('mouseenter',(event,d)=>showTooltip(event,d)).on('mousemove',(event,d)=>showTooltip(event,d)).on('mouseleave',()=>tooltip.style.display='none');
 const glows = glowLayer.selectAll('circle').data(restaurants).join('circle').attr('class','restaurant-glow').attr('r',14)
   .attr('fill',d=>d.type==='steakhouse'?'rgba(234,255,0,.28)':'rgba(180,76,255,.3)');
