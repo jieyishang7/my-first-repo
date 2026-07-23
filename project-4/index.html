@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A D3.js cyberpunk food atlas of New York City and Manhattan neighborhoods.">
+  <title>Geospatial Structures — NYC Food Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Orbitron:wght@500;700&amp;family=Roboto:wght@300;400;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="map-overrides.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-tile@1/dist/d3-tile.min.js"></script>
+  <script src="manhattan-data.js"></script>
+</head>
+<body>
+  <header><div class="left">Columbia GSAPP</div><div class="center">Computational Design Workflows<br><span>Geospatial Structures</span></div><div class="right"><a href="../index.html">Back to Archive</a></div></header>
+  <div class="foreground-city" aria-hidden="true"></div>
+  <main>
+    <div class="project-meta">Digital Object 04 · 2026</div>
+    <h1>NYC Food Atlas</h1>
+    <div class="project-byline">Jay Shang · Computational Design Workflows</div>
+    <section class="project-introduction"><div class="text-block"><h2>Geospatial Structures</h2><p>A D3.js street map of New York City with clickable Manhattan neighborhood boundaries and a wider collection of steakhouse and pasta locations across all five boroughs.</p></div></section>
+    <section class="map-panel">
+      <div class="panel-heading"><div><h2>New York Dining Network</h2><p>Drag to pan · Scroll to reveal streets · Click a Manhattan district to inspect</p></div><div class="signal-count"><strong id="visibleCount">72</strong><span>ACTIVE<br>SIGNALS</span></div></div>
+      <div class="filter-controls" role="group" aria-label="Restaurant filters">
+        <button class="filter-button active" data-filter="all" aria-pressed="true">All Spots · <span id="allCount">72</span></button>
+        <button class="filter-button" data-filter="steakhouse" aria-pressed="false">Steak Houses · <span id="steakCount">36</span></button>
+        <button class="filter-button" data-filter="pasta" aria-pressed="false">Pasta Spots · <span id="pastaCount">36</span></button>
+      </div>
+      <div class="map-stage">
+        <svg id="mapSvg" aria-label="Interactive D3.js street map of New York City, Manhattan neighborhoods, and restaurant locations"></svg>
+        <div id="tooltip" class="map-tooltip" role="status" aria-live="polite"></div>
+        <div id="districtInfo" class="district-info"><span>SELECT A MANHATTAN DISTRICT</span><strong>Click a cyan boundary to inspect and zoom</strong></div>
+        <div class="map-index">NYC / FIVE BOROUGHS<br>MANHATTAN DISTRICTS ACTIVE</div>
+        <div class="map-credit">© OpenStreetMap contributors · © CARTO</div>
+      </div>
+      <div class="map-controls" role="group" aria-label="Map zoom controls"><button id="zoomIn">Zoom In +</button><button id="zoomOut">Zoom Out −</button><button id="resetView">Reset View ↺</button></div>
+      <div class="legend" aria-label="Map legend"><span><i class="steak-dot"></i>Steak House</span><span><i class="pasta-dot"></i>Pasta Spot</span><span>— Clickable Manhattan District</span><span class="system-status">SYS.STATUS / ONLINE</span></div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

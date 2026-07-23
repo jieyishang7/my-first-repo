@@ -1,0 +1,20 @@
+.map-tile {
+  filter: brightness(1.58) contrast(1.08) saturate(.7);
+}
+
+.district {
+  fill: rgba(0, 229, 255, .045);
+  stroke: #00e5ff;
+  stroke-width: 1.35;
+  filter: drop-shadow(0 0 3px rgba(0, 229, 255, .75));
+}
+
+.steak-dot {
+  background: #eaff00;
+  box-shadow: 0 0 12px #eaff00;
+}
+
+.pasta-dot {
+  background: #b44cff;
+  box-shadow: 0 0 12px #b44cff;
+}
