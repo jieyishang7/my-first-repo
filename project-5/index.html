@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Love & Game — Relationship Survey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+
+  <!-- Firebase Realtime Database (same compat style used in Example 02) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+  <style>
+    :root {
+      --ink: #17221f;
+      --muted: #6b7470;
+      --paper: #f3f0e8;
+      --card: #fffdf8;
+      --line: #d8d8cd;
+      --accent: #ec6a55;
+      --soft: #e8eee4;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body.before-start {
+      overflow: hidden;
+    }
+
+    .landing-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 28px 40px 38px;
+      background:
+        radial-gradient(circle at 88% 14%, rgba(232, 238, 228, 0.95) 0 12%, transparent 12.2%),
+        radial-gradient(circle at 92% 18%, transparent 0 18%, rgba(23, 34, 31, 0.08) 18.2% 18.35%, transparent 18.55%),
+        var(--paper);
+    }
+
+    .landing-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      font-size: 12px;
+    }
+
+    .landing-note {
+      color: var(--muted);
+    }
+
+    .landing-content {
+      width: min(920px, 100%);
+      margin: auto 0;
+      padding: 70px 0;
+    }
+
+    .landing-content h1 {
+      max-width: 900px;
+      font-size: clamp(60px, 9vw, 112px);
+    }
+
+    .landing-content h1 em {
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    .landing-description {
+      max-width: 660px;
+      margin: 30px 0 34px;
+      color: #505c57;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.55;
+    }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 58px;
+      min-width: 270px;
+      padding: 18px 22px;
+      border: 0;
+      border-radius: 7px;
+      background: #333333;
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .primary-button:hover {
+      background: #111111;
+      transform: translateY(-2px);
+    }
+
+    .landing-bottom {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .survey-site {
+      display: none;
+    }
+
+    .survey-site.is-visible {
+      display: block;
+      animation: revealSurvey 0.45s ease both;
+    }
+
+    @keyframes revealSurvey {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 22px 40px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.82);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    main {
+      width: min(860px, calc(100% - 40px));
+      margin: 70px auto 110px;
+    }
+
+    .intro {
+      padding-bottom: 55px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(48px, 8vw, 82px);
+      font-weight: 400;
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+    }
+
+    .intro-text {
+      max-width: 700px;
+      margin: 30px 0 0;
+      color: #505c57;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 20px;
+      line-height: 1.55;
+    }
+
+    .survey-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 26px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .survey-meta span::before {
+      content: "•";
+      margin-right: 8px;
+      color: var(--accent);
+    }
+
+    .section {
+      padding: 55px 0 10px;
+    }
+
+    .live-poll {
+      margin: 55px 0 10px;
+      padding: 38px;
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.72);
+      text-align: center;
+    }
+
+    .live-poll h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 5vw, 45px);
+      font-weight: 400;
+      letter-spacing: -0.025em;
+    }
+
+    .poll-description {
+      margin: 12px 0 27px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .poll-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .poll-button {
+      display: flex;
+      min-width: 150px;
+      min-height: 130px;
+      padding: 22px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 13px;
+      border: 0;
+      border-radius: 9px;
+      color: white;
+      font-size: 19px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .poll-button:hover {
+      transform: translateY(-3px);
+      filter: brightness(0.96);
+    }
+
+    .poll-button:disabled {
+      cursor: wait;
+      opacity: 0.65;
+    }
+
+    .poll-yes {
+      background: #49ad52;
+      box-shadow: 0 8px 20px rgba(73, 173, 82, 0.2);
+    }
+
+    .poll-no {
+      background: #ed3934;
+      box-shadow: 0 8px 20px rgba(237, 57, 52, 0.2);
+    }
+
+    .poll-count {
+      display: grid;
+      min-width: 72px;
+      min-height: 43px;
+      padding: 5px 14px;
+      place-items: center;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.22);
+      font-size: 25px;
+    }
+
+    .poll-total {
+      margin: 25px 0 0;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .poll-total strong {
+      color: var(--ink);
+    }
+
+    .poll-status {
+      min-height: 18px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .section-heading {
+      margin-bottom: 38px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 40px;
+      font-weight: 400;
+      letter-spacing: -0.025em;
+    }
+
+    fieldset {
+      margin: 0 0 52px;
+      padding: 0;
+      border: 0;
+    }
+
+    legend {
+      width: 100%;
+      margin-bottom: 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      line-height: 1.4;
+    }
+
+    .number {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--accent);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+    }
+
+    .hint {
+      margin: -10px 0 15px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .options {
+      display: grid;
+      gap: 9px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-height: 56px;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.75);
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .option:hover {
+      border-color: #8d9b93;
+      background: var(--card);
+    }
+
+    .option:has(input:checked) {
+      border-color: var(--ink);
+      background: var(--soft);
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      width: 19px;
+      height: 19px;
+      margin: 0;
+      accent-color: var(--ink);
+      flex: 0 0 auto;
+    }
+
+    textarea,
+    input[type="email"],
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      outline: none;
+      background: var(--card);
+      color: var(--ink);
+      font: inherit;
+      line-height: 1.5;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    textarea:focus,
+    input[type="email"]:focus,
+    input[type="text"]:focus,
+    select:focus {
+      border-color: var(--ink);
+      box-shadow: 0 0 0 3px rgba(23, 34, 31, 0.08);
+    }
+
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: "⌄";
+      position: absolute;
+      top: 50%;
+      right: 18px;
+      color: var(--ink);
+      font-size: 20px;
+      pointer-events: none;
+      transform: translateY(-58%);
+    }
+
+    select {
+      min-height: 58px;
+      padding-right: 50px;
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--card);
+      cursor: pointer;
+    }
+
+    select:invalid {
+      color: var(--muted);
+    }
+
+    select option {
+      color: var(--ink);
+    }
+
+    .rating {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .rating .option {
+      min-height: 92px;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .rating strong {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 27px;
+      font-weight: 400;
+    }
+
+    .slider-card {
+      padding: 28px 30px;
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.75);
+    }
+
+    .slider-value {
+      display: inline-grid;
+      min-width: 56px;
+      height: 44px;
+      margin-bottom: 22px;
+      place-items: center;
+      border-radius: 6px;
+      background: var(--ink);
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      border-radius: 99px;
+      outline: none;
+      background: linear-gradient(
+        to right,
+        var(--ink) 0%,
+        var(--ink) var(--slider-progress, 50%),
+        #d8d9d5 var(--slider-progress, 50%),
+        #d8d9d5 100%
+      );
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 28px;
+      height: 28px;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 3px solid white;
+      border-radius: 50%;
+      background: #111;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border: 3px solid white;
+      border-radius: 50%;
+      background: #111;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .other-input {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .submit-area {
+      padding-top: 42px;
+      border-top: 1px solid var(--line);
+    }
+
+    .submit-area button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 42px;
+      min-width: 220px;
+      padding: 16px 19px;
+      border: 0;
+      background: var(--ink);
+      color: white;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .submit-area button:hover {
+      transform: translateY(-2px);
+      background: var(--accent);
+    }
+
+    .submit-area button:disabled {
+      cursor: wait;
+      opacity: 0.6;
+    }
+
+    .message {
+      display: none;
+      margin-top: 20px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message.error {
+      display: block;
+      background: #f8ddd7;
+      color: #762f24;
+    }
+
+    .message.success {
+      display: block;
+      background: #dfeadc;
+      color: #29452e;
+    }
+
+    @media (max-width: 650px) {
+      .landing-screen { padding: 22px 20px 28px; }
+      .landing-note, .landing-bottom span:last-child { display: none; }
+      .landing-content h1 { font-size: 56px; }
+      .primary-button { width: 100%; min-width: 0; }
+      .live-poll { padding: 30px 18px; }
+      .poll-button { min-width: 125px; min-height: 118px; }
+      header { padding: 18px 20px; }
+      main { margin-top: 48px; }
+      h1 { font-size: 51px; }
+      .section-heading h2 { font-size: 34px; }
+      legend { font-size: 21px; }
+      .rating { gap: 4px; }
+      .rating .option { min-height: 72px; padding: 8px 3px; }
+      .rating .option span { display: none; }
+    }
+
+    /* Project 5 — LOVE × GAME visual system */
+    :root {
+      --ink: #fff7ff;
+      --muted: #b7a7c6;
+      --paper: #090612;
+      --card: #141021;
+      --line: rgba(255, 82, 169, 0.28);
+      --accent: #ff4fa3;
+      --soft: #22162f;
+      --cyan: #64f7ff;
+      --violet: #9c5cff;
+      --danger: #ff3f67;
+    }
+
+    body {
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(156, 92, 255, 0.22), transparent 31%),
+        radial-gradient(circle at 88% 16%, rgba(255, 79, 163, 0.2), transparent 27%),
+        #090612;
+      font-family: "Space Grotesk", Arial, sans-serif;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      content: "";
+      background:
+        linear-gradient(rgba(100, 247, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 79, 163, 0.045) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, black, transparent 86%);
+      pointer-events: none;
+    }
+
+    h1,
+    .section-heading h2,
+    .live-poll h2,
+    legend,
+    .intro-text,
+    .landing-description {
+      font-family: "Space Grotesk", Arial, sans-serif;
+    }
+
+    .brand,
+    .eyebrow,
+    .number,
+    .status,
+    .landing-note,
+    .primary-button,
+    .submit-area button {
+      font-family: "Orbitron", sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .landing-screen {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(9, 6, 18, 0.14), rgba(9, 6, 18, 0.92)),
+        linear-gradient(135deg, #090612 0%, #160b29 50%, #090612 100%);
+    }
+
+    .landing-screen::before {
+      position: absolute;
+      inset: 0;
+      content: "";
+      background:
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 5px),
+        linear-gradient(90deg, transparent 49.8%, rgba(255, 79, 163, 0.1) 50%, transparent 50.2%);
+      pointer-events: none;
+    }
+
+    .landing-top,
+    .landing-content,
+    .landing-bottom {
+      position: relative;
+      z-index: 1;
+    }
+
+    .landing-top {
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(100, 247, 255, 0.25);
+    }
+
+    .brand {
+      color: var(--cyan);
+      text-shadow: 0 0 14px rgba(100, 247, 255, 0.58);
+    }
+
+    .landing-note,
+    .status {
+      color: #d1bfdc;
+      font-size: 10px;
+    }
+
+    .landing-content {
+      max-width: 1060px;
+    }
+
+    .landing-content::before {
+      display: block;
+      width: fit-content;
+      margin-bottom: 18px;
+      padding: 7px 10px;
+      border: 1px solid rgba(100, 247, 255, 0.42);
+      color: var(--cyan);
+      content: "PLAYER 01  /  CHOOSE YOUR PATH";
+      font-family: "Orbitron", sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      box-shadow: inset 0 0 18px rgba(100, 247, 255, 0.08);
+    }
+
+    .landing-content h1 {
+      color: #fff;
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(52px, 8.5vw, 108px);
+      font-weight: 800;
+      line-height: 0.94;
+      text-transform: uppercase;
+      text-shadow:
+        3px 3px 0 rgba(255, 79, 163, 0.36),
+        -2px -2px 0 rgba(100, 247, 255, 0.24),
+        0 0 35px rgba(156, 92, 255, 0.42);
+    }
+
+    .landing-content h1 em {
+      color: var(--accent);
+      font-style: normal;
+      text-shadow: 0 0 25px rgba(255, 79, 163, 0.7);
+    }
+
+    .landing-description,
+    .intro-text {
+      color: #c9bad4;
+    }
+
+    .primary-button {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--cyan);
+      border-radius: 0;
+      background: linear-gradient(90deg, #ff3e91, #8e4fff);
+      color: white;
+      box-shadow:
+        0 0 24px rgba(255, 79, 163, 0.4),
+        inset 0 0 18px rgba(255, 255, 255, 0.1);
+    }
+
+    .primary-button:hover {
+      border-color: white;
+      background: linear-gradient(90deg, #ff5caf, #6c5cff);
+      box-shadow:
+        0 0 34px rgba(255, 79, 163, 0.62),
+        0 0 20px rgba(100, 247, 255, 0.3);
+    }
+
+    .survey-meta,
+    .landing-bottom {
+      color: #9f90b0;
+    }
+
+    .survey-meta span::before,
+    .eyebrow,
+    .number {
+      color: var(--accent);
+    }
+
+    header {
+      border-bottom-color: rgba(255, 79, 163, 0.35);
+      background: rgba(9, 6, 18, 0.88);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+    }
+
+    main {
+      width: min(940px, calc(100% - 40px));
+    }
+
+    .intro {
+      border-bottom-color: rgba(100, 247, 255, 0.22);
+    }
+
+    .intro h1 {
+      color: white;
+      font-family: "Orbitron", sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-shadow: 0 0 30px rgba(255, 79, 163, 0.32);
+    }
+
+    .live-poll,
+    .slider-card {
+      position: relative;
+      border-color: rgba(255, 79, 163, 0.42);
+      background:
+        linear-gradient(135deg, rgba(255, 79, 163, 0.1), transparent 38%),
+        rgba(20, 16, 33, 0.86);
+      box-shadow:
+        inset 0 0 30px rgba(156, 92, 255, 0.08),
+        0 12px 40px rgba(0, 0, 0, 0.22);
+    }
+
+    .live-poll::before {
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      width: 78px;
+      height: 4px;
+      content: "";
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+    }
+
+    .live-poll h2,
+    .section-heading h2,
+    legend {
+      color: #fff9ff;
+    }
+
+    .poll-description,
+    .poll-status,
+    .poll-total,
+    .hint,
+    .slider-labels {
+      color: var(--muted);
+    }
+
+    .poll-yes {
+      border: 1px solid var(--cyan);
+      border-radius: 2px;
+      background: linear-gradient(145deg, #167e8f, #2450a1);
+      box-shadow: 0 0 24px rgba(100, 247, 255, 0.22);
+    }
+
+    .poll-no {
+      border: 1px solid #ff7bb9;
+      border-radius: 2px;
+      background: linear-gradient(145deg, #d62f75, #842d86);
+      box-shadow: 0 0 24px rgba(255, 79, 163, 0.24);
+    }
+
+    .poll-count {
+      background: rgba(8, 5, 17, 0.42);
+      font-family: "Orbitron", sans-serif;
+    }
+
+    .poll-total {
+      border-top-color: rgba(255, 79, 163, 0.2);
+    }
+
+    .poll-total strong {
+      color: var(--cyan);
+    }
+
+    .section {
+      position: relative;
+      border-top: 1px solid rgba(100, 247, 255, 0.12);
+    }
+
+    .section-heading h2 {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(30px, 5vw, 45px);
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(156, 92, 255, 0.28);
+    }
+
+    .option {
+      border-color: rgba(183, 167, 198, 0.22);
+      background: rgba(20, 16, 33, 0.74);
+      color: #e9dff0;
+    }
+
+    .option:hover {
+      border-color: var(--cyan);
+      background: rgba(100, 247, 255, 0.06);
+      box-shadow: inset 4px 0 0 var(--cyan);
+    }
+
+    .option:has(input:checked) {
+      border-color: var(--accent);
+      background: linear-gradient(90deg, rgba(255, 79, 163, 0.18), rgba(156, 92, 255, 0.08));
+      box-shadow:
+        inset 4px 0 0 var(--accent),
+        0 0 20px rgba(255, 79, 163, 0.12);
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      accent-color: var(--accent);
+    }
+
+    textarea,
+    input[type="email"],
+    input[type="text"],
+    select {
+      border-color: rgba(183, 167, 198, 0.28);
+      background: #110d1c;
+      color: #fff;
+    }
+
+    textarea::placeholder,
+    input::placeholder {
+      color: #786b86;
+    }
+
+    textarea:focus,
+    input[type="email"]:focus,
+    input[type="text"]:focus,
+    select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(100, 247, 255, 0.1);
+    }
+
+    select:invalid,
+    select option {
+      color: #b7a7c6;
+      background: #110d1c;
+    }
+
+    .select-wrap::after {
+      color: var(--cyan);
+    }
+
+    .slider-value {
+      border: 1px solid var(--accent);
+      border-radius: 2px;
+      background: #110d1c;
+      color: var(--accent);
+      font-family: "Orbitron", sans-serif;
+      box-shadow: 0 0 15px rgba(255, 79, 163, 0.25);
+    }
+
+    input[type="range"] {
+      background: linear-gradient(
+        to right,
+        var(--accent) 0%,
+        var(--accent) var(--slider-progress, 50%),
+        #33283e var(--slider-progress, 50%),
+        #33283e 100%
+      );
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      border-color: var(--cyan);
+      background: var(--accent);
+      box-shadow: 0 0 14px rgba(255, 79, 163, 0.7);
+    }
+
+    .submit-area {
+      border-top-color: rgba(255, 79, 163, 0.34);
+    }
+
+    .submit-area button {
+      border: 1px solid var(--cyan);
+      background: linear-gradient(90deg, #ff3e91, #8e4fff);
+      box-shadow: 0 0 24px rgba(255, 79, 163, 0.35);
+    }
+
+    .submit-area button:hover {
+      background: linear-gradient(90deg, #ff5caf, #6c5cff);
+    }
+
+    .message.error {
+      border: 1px solid var(--danger);
+      background: rgba(255, 63, 103, 0.12);
+      color: #ff91aa;
+    }
+
+    .message.success {
+      border: 1px solid var(--cyan);
+      background: rgba(100, 247, 255, 0.09);
+      color: var(--cyan);
+    }
+
+    @media (max-width: 650px) {
+      .landing-content h1 {
+        font-size: 47px;
+      }
+
+      .landing-content::before {
+        font-size: 8px;
+      }
+
+    }
+
+    @media (min-width: 651px) and (max-width: 1050px) {
+      .landing-content {
+        max-width: 760px;
+      }
+    }
+
+    /* Love particles and heart HUD inside the questionnaire */
+    .survey-site {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    .survey-site header,
+    .survey-site main {
+      position: relative;
+      z-index: 2;
+    }
+
+    .heart-field {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .heart-field span {
+      position: absolute;
+      display: block;
+      color: rgba(255, 79, 163, 0.2);
+      font-family: Arial, sans-serif;
+      font-size: 28px;
+      line-height: 1;
+      text-shadow:
+        0 0 9px rgba(255, 79, 163, 0.55),
+        0 0 22px rgba(156, 92, 255, 0.3);
+      animation: heartFloat 7s ease-in-out infinite alternate;
+    }
+
+    .heart-field span:nth-child(1) { top: 9%; left: 3%; font-size: 46px; animation-delay: -1s; }
+    .heart-field span:nth-child(2) { top: 19%; right: 5%; color: rgba(100, 247, 255, 0.16); font-size: 33px; animation-delay: -4s; }
+    .heart-field span:nth-child(3) { top: 34%; left: 7%; font-size: 23px; animation-delay: -2s; }
+    .heart-field span:nth-child(4) { top: 43%; right: 2%; font-size: 58px; animation-delay: -5s; }
+    .heart-field span:nth-child(5) { top: 59%; left: 2%; color: rgba(156, 92, 255, 0.25); font-size: 38px; animation-delay: -3s; }
+    .heart-field span:nth-child(6) { top: 71%; right: 8%; font-size: 25px; animation-delay: -6s; }
+    .heart-field span:nth-child(7) { top: 84%; left: 5%; color: rgba(100, 247, 255, 0.14); font-size: 48px; }
+    .heart-field span:nth-child(8) { top: 92%; right: 3%; font-size: 31px; animation-delay: -2.5s; }
+    .heart-field span:nth-child(9) { top: 14%; left: 18%; font-size: 14px; animation-delay: -3.5s; }
+    .heart-field span:nth-child(10) { top: 29%; right: 17%; font-size: 18px; animation-delay: -1.5s; }
+    .heart-field span:nth-child(11) { top: 52%; left: 15%; font-size: 15px; animation-delay: -5.5s; }
+    .heart-field span:nth-child(12) { top: 67%; right: 18%; font-size: 17px; animation-delay: -4.5s; }
+    .heart-field span:nth-child(13) { top: 78%; left: 21%; font-size: 13px; animation-delay: -2.2s; }
+    .heart-field span:nth-child(14) { top: 95%; right: 22%; font-size: 20px; animation-delay: -6.2s; }
+
+    @keyframes heartFloat {
+      from { transform: translate3d(0, -8px, 0) rotate(-5deg); }
+      to { transform: translate3d(9px, 15px, 0) rotate(7deg); }
+    }
+
+    .section-heading {
+      position: relative;
+      padding: 24px 86px 24px 24px;
+      border: 1px solid rgba(255, 79, 163, 0.2);
+      background:
+        linear-gradient(90deg, rgba(255, 79, 163, 0.12), transparent 72%),
+        rgba(15, 10, 26, 0.58);
+      box-shadow: inset 4px 0 0 var(--accent);
+    }
+
+    .section-heading::before {
+      position: absolute;
+      top: 12px;
+      right: 17px;
+      color: var(--accent);
+      content: "♥";
+      font-family: Arial, sans-serif;
+      font-size: 48px;
+      line-height: 1;
+      text-shadow: 0 0 17px rgba(255, 79, 163, 0.72);
+    }
+
+    .section-heading::after {
+      position: absolute;
+      right: 15px;
+      bottom: 10px;
+      color: var(--cyan);
+      content: "LOVE LEVEL";
+      font-family: "Orbitron", sans-serif;
+      font-size: 7px;
+      letter-spacing: 0.13em;
+    }
+
+    fieldset {
+      position: relative;
+    }
+
+    fieldset::before {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      color: rgba(255, 79, 163, 0.12);
+      content: "♡";
+      font-family: Arial, sans-serif;
+      font-size: 31px;
+      pointer-events: none;
+    }
+
+    .option {
+      position: relative;
+      padding-right: 48px;
+      overflow: hidden;
+    }
+
+    .option::after {
+      position: absolute;
+      top: 50%;
+      right: 17px;
+      color: rgba(183, 167, 198, 0.18);
+      content: "♡";
+      font-family: Arial, sans-serif;
+      font-size: 22px;
+      line-height: 1;
+      transform: translateY(-50%);
+      transition: 0.18s ease;
+    }
+
+    .option:has(input:checked)::after {
+      color: var(--accent);
+      content: "♥";
+      text-shadow:
+        0 0 9px rgba(255, 79, 163, 0.85),
+        0 0 18px rgba(255, 79, 163, 0.45);
+      transform: translateY(-50%) scale(1.18);
+    }
+
+    .live-poll {
+      overflow: hidden;
+    }
+
+    .live-poll::after {
+      position: absolute;
+      right: -24px;
+      bottom: -47px;
+      color: rgba(255, 79, 163, 0.08);
+      content: "♥";
+      font-family: Arial, sans-serif;
+      font-size: 168px;
+      line-height: 1;
+      pointer-events: none;
+      transform: rotate(-12deg);
+    }
+
+    .live-poll > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .poll-button span:first-child::before {
+      margin-right: 8px;
+      content: "♥";
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .slider-card::after {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      color: rgba(255, 79, 163, 0.27);
+      content: "♥ ♥ ♥ ♥ ♥";
+      font-size: 13px;
+      letter-spacing: 0.18em;
+    }
+
+    .submit-area {
+      position: relative;
+      padding: 44px 28px 28px;
+      border: 1px solid rgba(255, 79, 163, 0.3);
+      background:
+        linear-gradient(135deg, rgba(255, 79, 163, 0.11), transparent 46%),
+        rgba(20, 16, 33, 0.72);
+    }
+
+    .submit-area::before {
+      position: absolute;
+      top: -19px;
+      right: 28px;
+      padding: 4px 13px;
+      border: 1px solid var(--accent);
+      background: #110d1c;
+      color: var(--accent);
+      content: "♥ FINAL LEVEL ♥";
+      font-family: "Orbitron", sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      box-shadow: 0 0 14px rgba(255, 79, 163, 0.28);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .heart-field span {
+        animation: none;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .heart-field span:nth-child(n+9) {
+        display: none;
+      }
+
+      .heart-field span {
+        opacity: 0.55;
+      }
+
+      .section-heading {
+        padding: 20px 68px 20px 18px;
+      }
+
+      .section-heading::before {
+        font-size: 38px;
+      }
+    }
+  </style>
+</head>
+
+<body class="before-start">
+  <section class="landing-screen" id="landing-screen">
+    <div class="landing-top">
+      <div class="brand">LOVE × GAME / PROJECT 05</div>
+      <div class="landing-note">Anonymous relationship quest</div>
+    </div>
+
+    <div class="landing-content">
+      <p class="eyebrow">Romance · Intimacy · Player choices</p>
+      <h1>How is modern love <em>really</em> changing?</h1>
+      <p class="landing-description">
+        Share your perspective on attraction, digital dating, emotional boundaries,
+        and the changing ways we form intimate relationships.
+      </p>
+      <button class="primary-button" id="start-survey" type="button">
+        <span>Start the survey</span>
+        <span>→</span>
+      </button>
+      <div class="survey-meta">
+        <span>22 questions</span>
+        <span>About 8 minutes</span>
+        <span>Anonymous by default</span>
+      </div>
+    </div>
+
+    <div class="landing-bottom">
+      <span>Every choice reveals a new pattern.</span>
+      <span>Responses are used for research and trend analysis only.</span>
+    </div>
+  </section>
+
+  <div class="survey-site" id="survey-site">
+    <div class="heart-field" aria-hidden="true">
+      <span>♥</span><span>♡</span><span>♥</span><span>♡</span>
+      <span>♥</span><span>♡</span><span>♥</span><span>♡</span>
+      <span>♥</span><span>♡</span><span>♥</span><span>♡</span>
+      <span>♥</span><span>♡</span>
+    </div>
+    <header>
+      <div class="brand">LOVE × GAME / PROJECT 05</div>
+      <div class="status" id="firebase-status">Firebase configuration pending</div>
+    </header>
+
+    <main>
+    <section class="intro">
+      <p class="eyebrow">Anonymous research survey</p>
+      <h1>Changing Dynamics in Romantic and Intimate Relationships</h1>
+      <p class="intro-text">
+        This survey explores how social environments and digital media are changing dating,
+        intimacy, emotional values, and the ways people navigate romantic relationships.
+        Responses are anonymous except for optional contact information.
+      </p>
+      <div class="survey-meta">
+        <span>22 questions</span>
+        <span>About 8 minutes</span>
+        <span>Research and trend analysis only</span>
+      </div>
+    </section>
+
+    <section class="live-poll" aria-labelledby="long-distance-title">
+      <p class="eyebrow">Live poll · 01</p>
+      <h2 id="long-distance-title">Would you accept a long-distance relationship?</h2>
+      <p class="poll-description">Choose one answer. Results update in real time after Firebase is connected.</p>
+      <div class="poll-buttons">
+        <button class="poll-button poll-yes" id="long-distance-yes" type="button">
+          <span>Yes</span>
+          <span class="poll-count" id="long-distance-yes-count">0</span>
+        </button>
+        <button class="poll-button poll-no" id="long-distance-no" type="button">
+          <span>No</span>
+          <span class="poll-count" id="long-distance-no-count">0</span>
+        </button>
+      </div>
+      <p class="poll-total">Total votes: <strong id="long-distance-total">0</strong></p>
+      <p class="poll-status" id="long-distance-status">Waiting for Firebase configuration</p>
+    </section>
+
+    <section class="live-poll" aria-labelledby="interracial-title">
+      <p class="eyebrow">Live poll · 02</p>
+      <h2 id="interracial-title">Would you accept an interracial relationship?</h2>
+      <p class="poll-description">An interracial relationship means a relationship between people of different racial backgrounds.</p>
+      <div class="poll-buttons">
+        <button class="poll-button poll-yes" id="interracial-yes" type="button">
+          <span>Yes</span>
+          <span class="poll-count" id="interracial-yes-count">0</span>
+        </button>
+        <button class="poll-button poll-no" id="interracial-no" type="button">
+          <span>No</span>
+          <span class="poll-count" id="interracial-no-count">0</span>
+        </button>
+      </div>
+      <p class="poll-total">Total votes: <strong id="interracial-total">0</strong></p>
+      <p class="poll-status" id="interracial-status">Waiting for Firebase configuration</p>
+    </section>
+
+    <form id="relationship-survey">
+      <section class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Part I</p>
+          <h2>Demographics & Background</h2>
+        </div>
+
+        <fieldset>
+          <legend><span class="number">01</span>What is your gender?</legend>
+          <div class="select-wrap">
+            <select required name="gender" aria-label="What is your gender?">
+              <option value="" selected disabled>Select an option...</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Non-binary / Other">Non-binary / Other</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">02</span>What is your sexual orientation?</legend>
+          <div class="select-wrap">
+            <select required name="sexualOrientation" aria-label="What is your sexual orientation?">
+              <option value="" selected disabled>Select an option...</option>
+              <option value="Heterosexual">Heterosexual</option>
+              <option value="Homosexual / Gay / Lesbian">Homosexual / Gay / Lesbian</option>
+              <option value="Bisexual">Bisexual</option>
+              <option value="Asexual / Other">Asexual / Other</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">03</span>Which age group do you belong to?</legend>
+          <div class="select-wrap">
+            <select required name="ageGroup" aria-label="Which age group do you belong to?">
+              <option value="" selected disabled>Select an option...</option>
+              <option value="18 or under">18 or under</option>
+              <option value="19–25">19–25</option>
+              <option value="26–35">26–35</option>
+              <option value="36–45">36–45</option>
+              <option value="46 or above">46 or above</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">04</span>What is your current relationship status?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="relationshipStatus" value="Single">Single (between relationships / looking)</label>
+            <label class="option"><input type="radio" name="relationshipStatus" value="In a relationship / Cohabiting">In a relationship / Cohabiting</label>
+            <label class="option"><input type="radio" name="relationshipStatus" value="Married / Long-term partner">Married / Long-term partner</label>
+            <label class="option"><input type="radio" name="relationshipStatus" value="Divorced / Other">Divorced / Other</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">05</span>How many romantic relationships have you had in total?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="relationshipCount" value="0">0 (Never been in a relationship)</label>
+            <label class="option"><input type="radio" name="relationshipCount" value="1">1</label>
+            <label class="option"><input type="radio" name="relationshipCount" value="2–3">2–3</label>
+            <label class="option"><input type="radio" name="relationshipCount" value="4–5">4–5</label>
+            <label class="option"><input type="radio" name="relationshipCount" value="6 or more">6 or more</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><p class="eyebrow">Part II</p><h2>Attraction, Personality & Self-Perception</h2></div>
+
+        <fieldset data-max="3">
+          <legend><span class="number">06</span>What traits in a partner attract you the most?</legend>
+          <p class="hint">Select up to 3</p>
+          <div class="options">
+            <label class="option"><input type="checkbox" name="partnerTraits" value="High EQ and emotional steadiness">High emotional intelligence (EQ) and emotional steadiness</label>
+            <label class="option"><input type="checkbox" name="partnerTraits" value="Financial stability / Career potential">Financial stability / Career potential</label>
+            <label class="option"><input type="checkbox" name="partnerTraits" value="Shared values and lifestyle alignment">Shared values and lifestyle alignment</label>
+            <label class="option"><input type="checkbox" name="partnerTraits" value="Physical appearance / Charm">Physical appearance / Charm</label>
+            <label class="option"><input type="checkbox" name="partnerTraits" value="Humor, wit, and interesting soul">Humor, wit, and an interesting soul</label>
+            <label class="option"><input type="checkbox" name="partnerTraits" value="Independence and mutual respect for boundaries">Independence and mutual respect for boundaries</label>
+            <label class="option"><input type="checkbox" name="partnerTraits" value="Other" data-other-toggle="partnerTraitsOther">Other</label>
+          </div>
+          <input class="other-input" id="partnerTraitsOther" name="partnerTraitsOther" type="text" placeholder="Please specify">
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">07</span>Do you change your personality or habits when you are in a relationship?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="selfChange" value="Actively adapt and compromise">Yes, I actively adapt and compromise</label>
+            <label class="option"><input type="radio" name="selfChange" value="Subconsciously influenced by partner">Yes, usually subconsciously through my partner’s influence</label>
+            <label class="option"><input type="radio" name="selfChange" value="Rarely; stay true to myself">Rarely; I strive to stay true to myself</label>
+            <label class="option"><input type="radio" name="selfChange" value="No; strict boundaries">No; I maintain strict boundaries</label>
+          </div>
+        </fieldset>
+
+        <fieldset data-max="2">
+          <legend><span class="number">08</span>What traits do you possess that attract others to you?</legend>
+          <p class="hint">Select up to 2</p>
+          <div class="options">
+            <label class="option"><input type="checkbox" name="ownTraits" value="Empathy and emotional support">Empathy and emotional support</label>
+            <label class="option"><input type="checkbox" name="ownTraits" value="Independence and personal drive">Independence and personal drive</label>
+            <label class="option"><input type="checkbox" name="ownTraits" value="Humor and engaging personality">Humor and engaging personality</label>
+            <label class="option"><input type="checkbox" name="ownTraits" value="Reliability, loyalty, and security">Reliability, loyalty, and a sense of security</label>
+            <label class="option"><input type="checkbox" name="ownTraits" value="Physical attractiveness / Unique style">Physical attractiveness / Unique style</label>
+            <label class="option"><input type="checkbox" name="ownTraits" value="Not sure / Hard to say">Not sure / Hard to say</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><p class="eyebrow">Part III</p><h2>Dating Channels & “Fast-Food Romance”</h2></div>
+
+        <fieldset data-max="3">
+          <legend><span class="number">09</span>What are your primary channels for meeting potential romantic interests?</legend>
+          <p class="hint">Select up to 3</p>
+          <div class="options">
+            <label class="option"><input type="checkbox" name="meetingChannels" value="Dating apps">Dating apps / Social discovery platforms</label>
+            <label class="option"><input type="checkbox" name="meetingChannels" value="Social media">Social media interactions or direct messages</label>
+            <label class="option"><input type="checkbox" name="meetingChannels" value="Interest communities / Offline events">Interest-based communities / Offline events</label>
+            <label class="option"><input type="checkbox" name="meetingChannels" value="Mutual acquaintances">Introductions through mutual acquaintances</label>
+            <label class="option"><input type="checkbox" name="meetingChannels" value="Daily-life serendipity">Daily-life serendipity</label>
+            <label class="option"><input type="checkbox" name="meetingChannels" value="Other">Other</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">10</span>Have online dating tools and social media accelerated “fast-food romance”?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="fastFoodRomance" value="Heavily accelerated">Heavily accelerated</label>
+            <label class="option"><input type="radio" name="fastFoodRomance" value="Somewhat accelerated">Somewhat accelerated</label>
+            <label class="option"><input type="radio" name="fastFoodRomance" value="No obvious change">No obvious change</label>
+            <label class="option"><input type="radio" name="fastFoodRomance" value="Helps filter matches efficiently">It helps filter incompatible matches more efficiently</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><p class="eyebrow">Part IV</p><h2>Evaluation, Rituals & Love</h2></div>
+
+        <fieldset>
+          <legend><span class="number">11</span>How do you judge whether someone is “the right person”?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="rightPerson" value="Communication and psychological safety">Effortless communication and psychological safety</label>
+            <label class="option"><input type="radio" name="rightPerson" value="Aligned goals and values">Alignment in life goals, values, and future plans</label>
+            <label class="option"><input type="radio" name="rightPerson" value="Chemistry and attraction">Intense chemistry and physical/emotional attraction</label>
+            <label class="option"><input type="radio" name="rightPerson" value="Tolerance through conflict and time">Mutual tolerance through conflict and time</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">12</span>How important is a “sense of ritual” in a relationship?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="ritualImportance" value="Extremely important">Extremely important; it keeps romance alive</label>
+            <label class="option"><input type="radio" name="ritualImportance" value="Moderately important">Moderately important; substance matters more than form</label>
+            <label class="option"><input type="radio" name="ritualImportance" value="Not very important">Not very important; practical companionship matters more</label>
+            <label class="option"><input type="radio" name="ritualImportance" value="A waste of time and money">A waste of time and money; overly performative</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">13</span>How would you define your personal philosophy or outlook on love today?</legend>
+          <textarea required name="lovePhilosophy" placeholder="Write your response here..."></textarea>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">14</span>Do romantic relationships feel “gamified” nowadays?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="gamified" value="Strongly agree">Strongly agree; dating feels tactical or like risk management</label>
+            <label class="option"><input type="radio" name="gamified" value="Somewhat agree">Somewhat agree; people use more strategies and guard their hearts</label>
+            <label class="option"><input type="radio" name="gamified" value="Disagree">Disagree; genuine emotions still transcend tactical approaches</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><p class="eyebrow">Part V</p><h2>Emotional Values & Boundaries</h2></div>
+
+        <fieldset>
+          <legend><span class="number">15</span>What is the most noticeable recent shift in attitudes toward love and marriage?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="mindsetShift" value="Marriage less mandatory">Marriage is less of a mandatory life milestone</label>
+            <label class="option"><input type="radio" name="mindsetShift" value="More emotional value">Greater pursuit of emotional value and spiritual resonance</label>
+            <label class="option"><input type="radio" name="mindsetShift" value="Stronger boundaries">Stronger personal boundaries and less self-sacrifice</label>
+            <label class="option"><input type="radio" name="mindsetShift" value="No major change">No major change; traditional pressures remain dominant</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">16</span>I prefer emotional independence and substantial personal space, even in a relationship.</legend>
+          <p class="hint">Move the slider to choose a value from 1 to 5</p>
+          <div class="slider-card">
+            <output class="slider-value" id="independence-value" for="emotional-independence">3</output>
+            <input
+              required
+              id="emotional-independence"
+              name="emotionalIndependence"
+              type="range"
+              min="1"
+              max="5"
+              step="1"
+              value="3"
+              aria-label="Emotional independence rating from 1 to 5"
+            >
+            <div class="slider-labels">
+              <span>1 · Strongly disagree</span>
+              <span>5 · Strongly agree</span>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">17</span>What are the biggest barriers to long-term relationships?</legend>
+          <p class="hint">Select all that apply</p>
+          <div class="options">
+            <label class="option"><input type="checkbox" name="barriers" value="Economic pressure and living costs">Economic pressure and living costs</label>
+            <label class="option"><input type="checkbox" name="barriers" value="Anxiety about future uncertainty">Anxiety about future uncertainty</label>
+            <label class="option"><input type="checkbox" name="barriers" value="Differences in values, habits, or goals">Differences in values, consumption habits, or life goals</label>
+            <label class="option"><input type="checkbox" name="barriers" value="Fear of being hurt">Fear of being hurt after investing emotionally</label>
+            <label class="option"><input type="checkbox" name="barriers" value="Too little time and energy">Too little time and energy to nurture relationships</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><p class="eyebrow">Part VI</p><h2>Interaction & Conflict Resolution</h2></div>
+
+        <fieldset>
+          <legend><span class="number">18</span>When conflict arises, what behavior is most common among you and your peers?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="conflictBehavior" value="Immediate digital communication">Immediate communication via messages or voice notes</label>
+            <label class="option"><input type="radio" name="conflictBehavior" value="Silent treatment or distancing">Silent treatment, distancing, ghosting, or blocking</label>
+            <label class="option"><input type="radio" name="conflictBehavior" value="Psychological analysis">Using psychological terms to analyze a partner’s behavior</label>
+            <label class="option"><input type="radio" name="conflictBehavior" value="Face-to-face communication">Face-to-face deep communication</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">19</span>How do you view the rise of situationships and companion-only culture?</legend>
+          <div class="options">
+            <label class="option"><input required type="radio" name="situationships" value="Highly supportive">Highly supportive; suited for modern life</label>
+            <label class="option"><input type="radio" name="situationships" value="Acceptable transition">Acceptable as a transitional phase</label>
+            <label class="option"><input type="radio" name="situationships" value="Skeptical">Skeptical; it does not cure deeper loneliness</label>
+            <label class="option"><input type="radio" name="situationships" value="Strongly opposed">Strongly opposed; it avoids genuine intimacy</label>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><p class="eyebrow">Part VII</p><h2>Deep Insights</h2></div>
+
+        <fieldset>
+          <legend><span class="number">20</span>Have people become smarter at self-protection—or more exhausted and afraid to love? Why?</legend>
+          <textarea required name="protectionOrExhaustion" placeholder="Share your observation or experience..."></textarea>
+        </fieldset>
+
+        <fieldset>
+          <legend><span class="number">21</span>In one word or sentence, what is the biggest change in modern romantic interactions?</legend>
+          <textarea required name="biggestChange" placeholder="Write your summary here..."></textarea>
+        </fieldset>
+      </section>
+
+      <section class="section">
+        <fieldset>
+          <legend><span class="number">22 · Optional</span>Email address</legend>
+          <p class="hint">Leave your email only if you are comfortable being contacted about this research.</p>
+          <input type="email" id="email" name="email" placeholder="example@domain.com">
+        </fieldset>
+      </section>
+
+      <div class="submit-area">
+        <button id="submit-button" type="submit">Submit response <span>→</span></button>
+        <div class="message" id="form-message" role="status"></div>
+      </div>
+    </form>
+    </main>
+  </div>
+
+  <script>
+    /*
+      FIREBASE SETUP
+      Send me your Firebase config and I will replace these placeholder values.
+      The structure matches the Firebase Realtime Database setup in Example 02.
+    */
+    const firebaseConfig = {
+      apiKey: "AIzaSyCsYaPZRkapDgx_NddFDFhOZO_ZM8aFRrk",
+      authDomain: "myfirstrepo-poll-app.firebaseapp.com",
+      databaseURL: "https://myfirstrepo-poll-app-default-rtdb.firebaseio.com/",
+      projectId: "myfirstrepo-poll-app",
+      storageBucket: "myfirstrepo-poll-app.firebasestorage.app",
+      messagingSenderId: "223172401873",
+      appId: "1:223172401873:web:b8cb5e5a83f6935ec203f0"
+    };
+
+    const form = document.getElementById("relationship-survey");
+    const submitButton = document.getElementById("submit-button");
+    const message = document.getElementById("form-message");
+    const firebaseStatus = document.getElementById("firebase-status");
+    const longDistanceYes = document.getElementById("long-distance-yes-count");
+    const longDistanceNo = document.getElementById("long-distance-no-count");
+    const longDistanceTotal = document.getElementById("long-distance-total");
+    const longDistanceStatus = document.getElementById("long-distance-status");
+    const interracialYes = document.getElementById("interracial-yes-count");
+    const interracialNo = document.getElementById("interracial-no-count");
+    const interracialTotal = document.getElementById("interracial-total");
+    const interracialStatus = document.getElementById("interracial-status");
+    let database = null;
+
+    document.getElementById("start-survey").addEventListener("click", function() {
+      document.getElementById("landing-screen").style.display = "none";
+      document.getElementById("survey-site").classList.add("is-visible");
+      document.body.classList.remove("before-start");
+      window.scrollTo({ top: 0, behavior: "auto" });
+    });
+
+    const independenceSlider = document.getElementById("emotional-independence");
+    const independenceValue = document.getElementById("independence-value");
+
+    function updateIndependenceSlider() {
+      const progress = ((Number(independenceSlider.value) - 1) / 4) * 100;
+      independenceValue.value = independenceSlider.value;
+      independenceValue.textContent = independenceSlider.value;
+      independenceSlider.style.setProperty("--slider-progress", progress + "%");
+    }
+
+    independenceSlider.addEventListener("input", updateIndependenceSlider);
+    updateIndependenceSlider();
+
+    // Only connect when real Firebase information has been added.
+    if (firebaseConfig.apiKey) {
+      try {
+        firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+        firebaseStatus.textContent = "Connecting to Firebase...";
+
+        database.ref(".info/connected").on("value", function(snapshot) {
+          firebaseStatus.textContent = snapshot.val()
+            ? "Connected — responses will be saved"
+            : "Offline — waiting for connection";
+          longDistanceStatus.textContent = snapshot.val()
+            ? "Connected — cast your vote"
+            : "Offline — waiting for connection";
+          interracialStatus.textContent = snapshot.val()
+            ? "Connected — cast your vote"
+            : "Offline — waiting for connection";
+        });
+
+        database.ref("relationshipSurvey/polls/longDistance").on("value", function(snapshot) {
+          const votes = snapshot.val() || {};
+          const yes = Number(votes.yes) || 0;
+          const no = Number(votes.no) || 0;
+          longDistanceYes.textContent = yes;
+          longDistanceNo.textContent = no;
+          longDistanceTotal.textContent = yes + no;
+        });
+
+        database.ref("relationshipSurvey/polls/interracial").on("value", function(snapshot) {
+          const votes = snapshot.val() || {};
+          const yes = Number(votes.yes) || 0;
+          const no = Number(votes.no) || 0;
+          interracialYes.textContent = yes;
+          interracialNo.textContent = no;
+          interracialTotal.textContent = yes + no;
+        });
+      } catch (error) {
+        firebaseStatus.textContent = "Firebase configuration error";
+        console.error(error);
+      }
+    }
+
+    function voteLongDistance(choice) {
+      if (!database) {
+        longDistanceStatus.textContent = "Add the Firebase configuration to enable voting.";
+        return;
+      }
+
+      const yesButton = document.getElementById("long-distance-yes");
+      const noButton = document.getElementById("long-distance-no");
+      yesButton.disabled = true;
+      noButton.disabled = true;
+      longDistanceStatus.textContent = "Recording your vote...";
+
+      database.ref("relationshipSurvey/polls/longDistance/" + choice)
+        .transaction(function(currentVotes) {
+          return (Number(currentVotes) || 0) + 1;
+        })
+        .then(function() {
+          longDistanceStatus.textContent = "Thank you — your vote was recorded.";
+        })
+        .catch(function(error) {
+          console.error(error);
+          longDistanceStatus.textContent = "Your vote could not be recorded. Please try again.";
+        })
+        .finally(function() {
+          yesButton.disabled = false;
+          noButton.disabled = false;
+        });
+    }
+
+    document.getElementById("long-distance-yes").addEventListener("click", function() {
+      voteLongDistance("yes");
+    });
+
+    document.getElementById("long-distance-no").addEventListener("click", function() {
+      voteLongDistance("no");
+    });
+
+    function voteInterracial(choice) {
+      if (!database) {
+        interracialStatus.textContent = "Add the Firebase configuration to enable voting.";
+        return;
+      }
+
+      const yesButton = document.getElementById("interracial-yes");
+      const noButton = document.getElementById("interracial-no");
+      yesButton.disabled = true;
+      noButton.disabled = true;
+      interracialStatus.textContent = "Recording your vote...";
+
+      database.ref("relationshipSurvey/polls/interracial/" + choice)
+        .transaction(function(currentVotes) {
+          return (Number(currentVotes) || 0) + 1;
+        })
+        .then(function() {
+          interracialStatus.textContent = "Thank you — your vote was recorded.";
+        })
+        .catch(function(error) {
+          console.error(error);
+          interracialStatus.textContent = "Your vote could not be recorded. Please try again.";
+        })
+        .finally(function() {
+          yesButton.disabled = false;
+          noButton.disabled = false;
+        });
+    }
+
+    document.getElementById("interracial-yes").addEventListener("click", function() {
+      voteInterracial("yes");
+    });
+
+    document.getElementById("interracial-no").addEventListener("click", function() {
+      voteInterracial("no");
+    });
+
+    // Enforce limits for questions that allow only 2 or 3 selections.
+    document.querySelectorAll("fieldset[data-max]").forEach(function(fieldset) {
+      const max = Number(fieldset.dataset.max);
+      fieldset.addEventListener("change", function(event) {
+        if (event.target.type !== "checkbox") return;
+        const checked = fieldset.querySelectorAll('input[type="checkbox"]:checked');
+
+        if (checked.length > max) {
+          event.target.checked = false;
+          showMessage("You can select up to " + max + " options for this question.", "error");
+        } else {
+          clearMessage();
+        }
+      });
+    });
+
+    // Show a text field when the "Other" option is selected.
+    document.querySelectorAll("[data-other-toggle]").forEach(function(input) {
+      input.addEventListener("change", function() {
+        const otherInput = document.getElementById(input.dataset.otherToggle);
+        otherInput.style.display = input.checked ? "block" : "none";
+        if (!input.checked) otherInput.value = "";
+      });
+    });
+
+    function formToObject(formElement) {
+      const data = new FormData(formElement);
+      const response = {};
+
+      data.forEach(function(value, key) {
+        if (Object.prototype.hasOwnProperty.call(response, key)) {
+          if (!Array.isArray(response[key])) response[key] = [response[key]];
+          response[key].push(value);
+        } else {
+          response[key] = value;
+        }
+      });
+
+      response.submittedAt = new Date().toISOString();
+      return response;
+    }
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = "message " + type;
+    }
+
+    function clearMessage() {
+      message.textContent = "";
+      message.className = "message";
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+      clearMessage();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        showMessage("Please complete all required questions.", "error");
+        return;
+      }
+
+      if (!database) {
+        showMessage("The form is ready. Add your Firebase configuration to begin collecting responses.", "error");
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.firstChild.textContent = "Saving response ";
+
+      const responseData = formToObject(form);
+
+      // Each response gets its own unique Firebase key.
+      database.ref("relationshipSurvey/responses").push(responseData)
+        .then(function() {
+          showMessage("Thank you — your response has been recorded.", "success");
+          form.reset();
+          updateIndependenceSlider();
+          document.querySelectorAll(".other-input").forEach(function(input) {
+            input.style.display = "none";
+          });
+          window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        })
+        .catch(function(error) {
+          console.error(error);
+          showMessage("Your response could not be saved. Please check the connection and try again.", "error");
+        })
+        .finally(function() {
+          submitButton.disabled = false;
+          submitButton.firstChild.textContent = "Submit response ";
+        });
+    });
+  </script>
+</body>
+</html>
