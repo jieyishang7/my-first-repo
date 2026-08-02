@@ -61,8 +61,9 @@
 
     .landing-content {
       width: min(920px, 100%);
-      margin: auto 0;
+      margin: auto;
       padding: 70px 0;
+      text-align: center;
     }
 
     .landing-content h1 {
@@ -77,7 +78,7 @@
 
     .landing-description {
       max-width: 660px;
-      margin: 30px 0 34px;
+      margin: 30px auto 34px;
       color: #505c57;
       font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(18px, 2vw, 22px);
@@ -709,7 +710,7 @@
     .landing-content::before {
       display: block;
       width: fit-content;
-      margin-bottom: 18px;
+      margin: 0 auto 18px;
       padding: 7px 10px;
       border: 1px solid rgba(100, 247, 255, 0.42);
       color: var(--cyan);
@@ -731,6 +732,26 @@
         3px 3px 0 rgba(255, 79, 163, 0.36),
         -2px -2px 0 rgba(100, 247, 255, 0.24),
         0 0 35px rgba(156, 92, 255, 0.42);
+      animation: titleFlicker 3.8s infinite;
+    }
+
+    @keyframes titleFlicker {
+      0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        opacity: 1;
+        filter: brightness(1);
+      }
+      20%, 24%, 55% {
+        opacity: 0.38;
+        filter: brightness(1.65);
+      }
+      21%, 56% {
+        opacity: 0.82;
+        filter: brightness(0.75);
+      }
+    }
+
+    .landing-content .survey-meta {
+      justify-content: center;
     }
 
     .landing-content h1 em {
@@ -1192,7 +1213,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .heart-field span {
+      .heart-field span,
+      .landing-content h1 {
         animation: none;
       }
     }
@@ -1236,7 +1258,7 @@
         <span>→</span>
       </button>
       <div class="survey-meta">
-        <span>22 questions</span>
+        <span>21 questions</span>
         <span>About 8 minutes</span>
         <span>Anonymous by default</span>
       </div>
@@ -1267,10 +1289,10 @@
       <p class="intro-text">
         This survey explores how social environments and digital media are changing dating,
         intimacy, emotional values, and the ways people navigate romantic relationships.
-        Responses are anonymous except for optional contact information.
+        Responses are anonymous and used only for research and trend analysis.
       </p>
       <div class="survey-meta">
-        <span>22 questions</span>
+        <span>21 questions</span>
         <span>About 8 minutes</span>
         <span>Research and trend analysis only</span>
       </div>
@@ -1573,14 +1595,6 @@
         <fieldset>
           <legend><span class="number">21</span>In one word or sentence, what is the biggest change in modern romantic interactions?</legend>
           <textarea required name="biggestChange" placeholder="Write your summary here..."></textarea>
-        </fieldset>
-      </section>
-
-      <section class="section">
-        <fieldset>
-          <legend><span class="number">22 · Optional</span>Email address</legend>
-          <p class="hint">Leave your email only if you are comfortable being contacted about this research.</p>
-          <input type="email" id="email" name="email" placeholder="example@domain.com">
         </fieldset>
       </section>
 
