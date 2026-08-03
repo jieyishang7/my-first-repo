@@ -350,6 +350,12 @@
       font-size: 12px;
     }
 
+    .hint.error {
+      color: var(--accent);
+      font-weight: 700;
+      text-shadow: 0 0 12px rgba(255, 79, 163, 0.42);
+    }
+
     .options {
       display: grid;
       gap: 9px;
@@ -1775,15 +1781,20 @@
     // Enforce limits for questions that allow only 2 or 3 selections.
     document.querySelectorAll("fieldset[data-max]").forEach(function(fieldset) {
       const max = Number(fieldset.dataset.max);
+      const hint = fieldset.querySelector(".hint");
+      const defaultHint = "Select up to " + max;
+
       fieldset.addEventListener("change", function(event) {
         if (event.target.type !== "checkbox") return;
         const checked = fieldset.querySelectorAll('input[type="checkbox"]:checked');
 
         if (checked.length > max) {
           event.target.checked = false;
-          showMessage("You can select up to " + max + " options for this question.", "error");
+          hint.textContent = "You can select up to " + max + " options for this question.";
+          hint.classList.add("error");
         } else {
-          clearMessage();
+          hint.textContent = defaultHint;
+          hint.classList.remove("error");
         }
       });
     });

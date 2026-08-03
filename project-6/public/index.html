@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Love After Dark, an AI studio critic powered by Firebase and OpenAI.">
+    <title>Project 06 — Love After Dark</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=6">
+  </head>
+  <body>
+    <div class="club-lights" aria-hidden="true"></div>
+    <header class="masthead">
+      <a class="wordmark" href="#">LOVE / AFTER DARK</a>
+      <p>Project 06 · AI Studio Critic</p>
+      <span id="connection" class="connection" data-state="loading">Connecting</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Enter the feedback club · 2026</p>
+        <div class="heart-mark" aria-hidden="true">♥</div>
+        <h1 id="page-title">Design<br><em>after dark.</em></h1>
+        <p class="lede">Bring a project, a doubt, or a decision to the dance floor. Studio Critic
+          reveals hidden assumptions and gives you one focused move for the next iteration.</p>
+        <div class="prompt-list" aria-label="Example questions">
+          <button class="prompt" type="button"><span>01</span> Help me sharpen my project premise.</button>
+          <button class="prompt" type="button"><span>02</span> Critique how my circulation supports the concept.</button>
+          <button class="prompt" type="button"><span>03</span> What should I test in my next physical model?</button>
+        </div>
+      </section>
+
+      <section class="chat" aria-label="Chat with Studio Critic">
+        <div id="messages" class="messages" aria-live="polite">
+          <article class="message assistant">
+            <p class="label">Studio Critic · Online</p>
+            <p>What are you designing, and which decision feels least resolved?</p>
+          </article>
+        </div>
+
+        <form id="chat-form" class="composer">
+          <label for="message-input">Your project confession</label>
+          <textarea id="message-input" rows="3" maxlength="2000"
+            placeholder="Describe the context, intent, and current question…" required></textarea>
+          <div class="composer-footer">
+            <span id="status">Initializing a private session…</span>
+            <button id="send-button" type="submit" disabled>Send ↗</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <p>Firebase connected · OpenAI powered · Responses are prompts for reflection.</p>
+      <button id="clear-button" type="button">Clear my conversation</button>
+    </footer>
+
+    <script type="module" src="app.js?v=6"></script>
+  </body>
+</html>

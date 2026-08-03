@@ -1,0 +1,8 @@
+.firebase/
+.pnpm-store/
+firebase-debug.log*
+functions/node_modules/
+functions/.env
+functions/.env.*
+!.env.example
+.DS_Store
