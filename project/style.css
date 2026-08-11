@@ -196,6 +196,21 @@ h2 {
   line-height: 1.75;
 }
 
+.text-block .object-statement {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 43, 214, .28);
+}
+
+.object-statement strong {
+  color: var(--orange);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 138, 0, .65);
+}
+
 .chart-panel {
   position: relative;
   margin: 0 0 50px;
