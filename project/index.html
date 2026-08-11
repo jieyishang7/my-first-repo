@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Orbitron:wght@500;700&amp;family=Roboto:wght@300;400;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 </head>
 <body>
   <header>
@@ -20,8 +20,15 @@
   <div class="foreground-city" aria-hidden="true"></div>
 
   <main>
-    <div class="project-meta">Digital Object 02 · 2026</div>
+    <div class="project-meta">Digital Object 02 · Temporal Structure · 2026</div>
     <h1>Mapping My Weekly Rhythm</h1>
+
+    <div class="system-strip" aria-label="Visualization system details">
+      <span><b>Mode</b> Weekly Scan</span>
+      <span><b>Range</b> 00:00–02:00</span>
+      <span><b>Input</b> Personal Time Log</span>
+      <span class="system-live"><i aria-hidden="true"></i> System Active</span>
+    </div>
 
     <section class="project-introduction">
       <div class="text-block">
@@ -35,27 +42,32 @@
       </div>
     </section>
 
-    <section class="chart-panel">
-      <h2>Weekly Schedule Gantt Chart</h2>
-      <p class="chart-description">This chart translates the week into horizontal time blocks. It shows how classes, homework, commuting, food, walking, exercise, museums, shopping, entertainment time, and sleep occupy different parts of each day.</p>
+    <section class="chart-panel" data-panel="01">
+      <div class="chart-heading">
+        <div><span class="chart-kicker">Temporal Scanner / 01</span><h2>Solar Rhythm Dial</h2></div>
+        <span class="chart-status">Interactive</span>
+      </div>
+      <p class="chart-description">A solar 26-hour clock maps one day at a time. Activity segments orbit a luminous core while radial energy rays expand and contract with focus, movement, and pressure. Switch between days, isolate activity modes, and hover over an arc for its exact time.</p>
       <div id="d3-container-1"></div>
     </section>
 
-    <section class="chart-panel">
-      <h2>Time Category Summary</h2>
-      <p class="chart-description">This summary aggregates the schedule into total weekly hours by category, making the balance between study, sleep, movement, culture, care, and entertainment time easier to compare.</p>
+    <section class="chart-panel" data-panel="02">
+      <div class="chart-heading">
+        <div><span class="chart-kicker">Duration Matrix / 02</span><h2>Activity Constellation</h2></div>
+        <span class="chart-status">Scaled by Hours</span>
+      </div>
+      <p class="chart-description">Weekly activity categories become a constellation of luminous nodes. Circle area encodes total duration, revealing which activities dominate the week without relying on a conventional bar chart.</p>
       <div id="d3-container-2"></div>
     </section>
 
-    <section class="chart-panel">
-      <h2>Daily Energy Heatmap</h2>
-      <p class="chart-description">This heatmap reads the same week as a field of energy and intensity. Darker cells indicate periods of higher focus, movement, or pressure, while lighter cells show rest, transition, or lower-intensity time.</p>
-      <div class="energy-legend" aria-label="Energy level color legend">
-        <div class="legend-item"><span class="legend-swatch energy-low"></span><span>Low Energy · Deep Navy Blue</span></div>
-        <div class="legend-item"><span class="legend-swatch energy-mid-low"></span><span>Lower-Mid Energy · Neon Blue</span></div>
-        <div class="legend-item"><span class="legend-swatch energy-mid-high"></span><span>Upper-Mid Energy · Electric Cyan</span></div>
-        <div class="legend-item"><span class="legend-swatch energy-high"></span><span>High Energy · Neon Yellow</span></div>
-        <div class="legend-item legend-hover"><span class="legend-swatch energy-hover"></span><span>Hover Effect · Yellow and Blue Dual Glow</span></div>
+    <section class="chart-panel" data-panel="03">
+      <div class="chart-heading">
+        <div><span class="chart-kicker">Energy Telemetry / 03</span><h2>Daily Signal Field</h2></div>
+        <span class="chart-status">26 Hour Trace</span>
+      </div>
+      <p class="chart-description">The same week is translated into seven parallel energy signals. Taller peaks indicate greater focus, movement, or pressure; low traces indicate sleep, transition, or open time.</p>
+      <div class="energy-scale" aria-label="Energy scale from low to high">
+        <span>Low / Rest</span><i aria-hidden="true"></i><span>High / Pressure</span>
       </div>
       <div id="d3-container-3"></div>
     </section>

@@ -9,8 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Orbitron:wght@500;700&amp;family=Roboto:wght@300;400;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
   <header>
@@ -34,40 +32,22 @@
     </section>
 
     <section class="canvas-panel">
-      <h2>Static Study: Folded Field</h2>
-      <p class="canvas-description">A static spatial drawing built from primitive shapes and color blocks.</p>
+      <h2>Static Study: Neon Card Protocol</h2>
+      <p class="canvas-description">A cyberpunk casino tableau combining a fan of glowing playing cards, a striped neon sun, perspective grid, skyline, HUD graphics, and floating hearts.</p>
+      <p class="object-statement"><strong>Statement.</strong> I used this exercise to transform the familiar visual system of playing cards into a retro-futurist interface. A neon ace of hearts, king of spades, queen of diamonds, and jack of clubs form the central deck, while rotation, overlap, a synthetic sunset, a gridded horizon, and floating hearts create depth without animation. The composition is intentionally static and uses no external dataset, treating the four suits as a compact graphic language for exploring hierarchy, color, symbolism, and cyberpunk atmosphere.</p>
       <div id="canvas-container-1" class="canvas-container"></div>
     </section>
 
     <section class="canvas-panel">
       <h2>Interactive Study: Signal Garden</h2>
       <p class="canvas-description">An animated drawing where particles orbit through a gridded landscape and respond to the mouse.</p>
+      <p class="object-statement"><strong>Statement.</strong> I attempted to transform a rigid digital grid into a responsive, garden-like system by animating 42 particles around randomized centers. Cursor position changes their orbit, scale, and color, while the concentric cursor graphic makes the area of influence visible; clicking pulls the particles' centers toward the selected point and reorganizes the field. The study uses procedurally generated values rather than an external dataset, treating interaction itself as the source of variation.</p>
       <div id="canvas-container-2" class="canvas-container"></div>
     </section>
 
-    <section class="project-introduction single-column">
-      <div class="text-block">
-        <h2>3D Studies</h2>
-        <p>Two Three.js scenes exploring light, depth, and spatial composition in 3D.</p>
-      </div>
-    </section>
-
-    <section class="canvas-panel">
-      <h2>Cyberpunk City Blocks</h2>
-      <p class="canvas-description">A navigable neon city composed of towers, illuminated windows, intersecting streets, road markings, and glowing urban infrastructure.</p>
-      <div id="threejs-container-1" class="canvas-container"></div>
-    </section>
-
-    <section class="canvas-panel">
-      <h2>Atmospheric Geometry</h2>
-      <p class="canvas-description">A layered field of UCLA and Columbia identity panels using fog, neon light, depth, and material contrast.</p>
-      <div id="threejs-container-3" class="canvas-container"></div>
-    </section>
   </main>
 
   <script src="2d-drawing.js"></script>
   <script src="bouncing-ball.js"></script>
-  <script src="3d-primitive.js"></script>
-  <script src="atmospheric-geometry.js"></script>
 </body>
 </html>

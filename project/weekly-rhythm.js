@@ -177,205 +177,322 @@
     return d3.select(containerId)
       .append("div")
       .attr("class", "tooltip")
-      .style("position", "absolute")
-      .style("background", "rgba(5, 5, 16, 0.96)")
-      .style("color", "#f6f7ff")
-      .style("padding", "10px 12px")
-      .style("border", "1px solid #00e5ff")
-      .style("border-radius", "8px")
-      .style("box-shadow", "0 0 24px rgba(0, 229, 255, 0.35), 0 0 12px rgba(255, 43, 214, 0.3)")
-      .style("font-size", "12px")
-      .style("font-family", "'Roboto', sans-serif")
-      .style("line-height", "1.45")
-      .style("pointer-events", "none")
-      .style("opacity", 0);
+      .attr("role", "tooltip");
+  }
+
+  function positionTooltip(event, tip, containerId) {
+    const [x, y] = d3.pointer(event, document.querySelector(containerId));
+    tip.style("left", `${x + 16}px`).style("top", `${y + 16}px`);
+  }
+
+  function chartSvg(container, viewBox) {
+    return container.append("svg")
+      .attr("class", "chart-svg")
+      .attr("viewBox", viewBox)
+      .attr("preserveAspectRatio", "xMidYMid meet")
+      .attr("role", "img");
   }
 
   function drawSchedule() {
-    const margin = { top: 36, right: 24, bottom: 44, left: 92 };
-    const width = 800 - margin.left - margin.right;
-    const height = 380 - margin.top - margin.bottom;
-    const tip = tooltip("#d3-container-1");
-    const container = d3.select("#d3-container-1");
+    const containerId = "#d3-container-1";
+    const container = d3.select(containerId);
+    const tip = tooltip(containerId);
+    const width = 1000;
+    const height = 790;
+    const cx = 500;
+    const cy = 395;
+    const sunRadius = 78;
+    const segmentInnerRadius = 242;
+    const segmentOuterRadius = 298;
+    const dialRadius = 324;
+    const angle = d3.scaleLinear().domain([0, 26]).range([0, Math.PI * 2]);
+    let selectedDay = days[0];
+    let activeFilter = filters[0];
 
-    const controls = container
-      .append("div")
-      .attr("class", "filter-controls");
+    const controls = container.append("div").attr("class", "solar-controls");
+    const dayControls = controls.append("div").attr("class", "solar-control-group");
+    dayControls.append("span").attr("class", "control-label").text("Day Channel");
+    dayControls.selectAll("button")
+      .data(days)
+      .enter()
+      .append("button")
+      .attr("type", "button")
+      .attr("class", d => d === selectedDay ? "day-button active" : "day-button")
+      .attr("aria-pressed", d => d === selectedDay ? "true" : "false")
+      .text(d => d.slice(0, 3))
+      .on("click", function(event, day) {
+        selectedDay = day;
+        dayControls.selectAll("button").classed("active", false).attr("aria-pressed", "false");
+        d3.select(this).classed("active", true).attr("aria-pressed", "true");
+        updateSun();
+        updateSchedule();
+      });
 
-    controls.selectAll("button")
+    const filterControls = controls.append("div").attr("class", "solar-control-group");
+    filterControls.append("span").attr("class", "control-label").text("Signal Filter");
+    filterControls.selectAll("button")
       .data(filters)
       .enter()
       .append("button")
       .attr("type", "button")
       .attr("class", d => d.id === "all" ? "filter-button active" : "filter-button")
+      .attr("aria-pressed", d => d.id === "all" ? "true" : "false")
       .text(d => d.label)
       .on("click", function(event, d) {
-        controls.selectAll("button").classed("active", false);
-        d3.select(this).classed("active", true);
-        updateSchedule(d);
+        activeFilter = d;
+        filterControls.selectAll("button").classed("active", false).attr("aria-pressed", "false");
+        d3.select(this).classed("active", true).attr("aria-pressed", "true");
+        updateSchedule();
       });
 
-    const svg = container
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .style("font-family", "'Roboto', sans-serif")
-      .append("g")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    const svg = chartSvg(container, `0 0 ${width} ${height}`)
+      .attr("aria-label", "Solar daily rhythm dial with activity arcs and energy rays");
 
-    const x = d3.scaleLinear().domain([0, 26]).range([0, width]);
-    const y = d3.scaleBand().domain(days).range([0, height]).padding(0.18);
+    const defs = svg.append("defs");
+    const sunGradient = defs.append("radialGradient").attr("id", "sun-core-gradient");
+    sunGradient.append("stop").attr("offset", "0%").attr("stop-color", "#fffde7");
+    sunGradient.append("stop").attr("offset", "34%").attr("stop-color", "#fff700");
+    sunGradient.append("stop").attr("offset", "68%").attr("stop-color", "#ff8a00");
+    sunGradient.append("stop").attr("offset", "100%").attr("stop-color", "#ff2bd6").attr("stop-opacity", .5);
 
-    svg.append("g")
-      .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(x).tickValues(d3.range(0, 27, 2)).tickFormat(formatHour))
-      .selectAll("text")
-      .style("font-size", "11px");
+    const auraGradient = defs.append("radialGradient").attr("id", "sun-aura-gradient");
+    auraGradient.append("stop").attr("offset", "0%").attr("stop-color", "#fff700").attr("stop-opacity", .42);
+    auraGradient.append("stop").attr("offset", "55%").attr("stop-color", "#ff8a00").attr("stop-opacity", .2);
+    auraGradient.append("stop").attr("offset", "100%").attr("stop-color", "#ff2bd6").attr("stop-opacity", .03);
 
-    svg.append("g")
-      .call(d3.axisLeft(y))
-      .selectAll("text")
-      .style("font-size", "12px");
+    const dial = svg.append("g").attr("transform", `translate(${cx},${cy})`);
+    dial.append("circle").attr("class", "solar-outer-track").attr("r", dialRadius);
+    dial.append("circle").attr("class", "solar-segment-track").attr("r", (segmentInnerRadius + segmentOuterRadius) / 2);
+    dial.append("circle").attr("class", "solar-inner-orbit").attr("r", 215);
+    dial.append("circle").attr("class", "solar-inner-orbit orbit-secondary").attr("r", 164);
 
-    svg.append("g")
-      .attr("class", "grid")
-      .selectAll("line")
-      .data(d3.range(0, 27, 2))
-      .enter()
-      .append("line")
-      .attr("x1", d => x(d))
-      .attr("x2", d => x(d))
-      .attr("y1", 0)
-      .attr("y2", height)
-      .attr("stroke", "rgba(0, 229, 255, 0.12)");
+    const tickLayer = dial.append("g").attr("class", "orbit-ticks solar-ticks");
+    d3.range(0, 25, 3).forEach(function(hour) {
+      const a = angle(hour) - Math.PI / 2;
+      const x1 = Math.cos(a) * (dialRadius - 8);
+      const y1 = Math.sin(a) * (dialRadius - 8);
+      const x2 = Math.cos(a) * (dialRadius + 7);
+      const y2 = Math.sin(a) * (dialRadius + 7);
+      const tx = Math.cos(a) * (dialRadius + 25);
+      const ty = Math.sin(a) * (dialRadius + 25);
 
-    const blockLayer = svg.append("g").attr("class", "schedule-block-layer");
-    const labelLayer = svg.append("g").attr("class", "schedule-label-layer");
+      tickLayer.append("line").attr("x1", x1).attr("y1", y1).attr("x2", x2).attr("y2", y2);
+      tickLayer.append("text")
+        .attr("x", tx)
+        .attr("y", ty + 4)
+        .attr("text-anchor", "middle")
+        .text(formatHour(hour));
+    });
+
+    const energyLayer = dial.append("g").attr("class", "solar-energy-layer");
+    const auraPath = energyLayer.append("path").attr("class", "solar-energy-aura");
+    const rayLayer = energyLayer.append("g").attr("class", "solar-ray-layer");
+    const arcLayer = dial.append("g").attr("class", "schedule-arc-layer solar-arc-layer");
+    const arcGenerator = d3.arc().cornerRadius(10).padAngle(0.009);
+
+    const sunCore = dial.append("g").attr("class", "sun-core-group");
+    sunCore.append("circle").attr("class", "sun-corona").attr("r", sunRadius + 24);
+    sunCore.append("circle").attr("class", "sun-disc").attr("r", sunRadius);
+    const sunTitle = sunCore.append("text")
+      .attr("class", "sun-core-title")
+      .attr("text-anchor", "middle")
+      .attr("y", -2);
+    const sunSub = sunCore.append("text")
+      .attr("class", "sun-core-subtitle")
+      .attr("text-anchor", "middle")
+      .attr("y", 23);
+
+    function resetSunLabel() {
+      sunTitle.text(selectedDay.slice(0, 3).toUpperCase());
+      sunSub.text("26H SOLAR LOOP");
+    }
+
+    function energyForDay() {
+      return d3.range(0, 26).map(function(hour) {
+        const active = schedule.find(d => d.day === selectedDay && d.start < hour + 1 && d.end > hour);
+        const category = active ? active.category : "Personal";
+        const lateBoost = hour >= 22 && category === "Homework" ? 10 : 0;
+        return {
+          hour,
+          category,
+          value: Math.min(100, (energyByCategory[category] || 45) + lateBoost)
+        };
+      });
+    }
+
+    function rayPoint(hour, radius) {
+      const a = angle(hour + .5) - Math.PI / 2;
+      return [Math.cos(a) * radius, Math.sin(a) * radius];
+    }
+
+    function updateSun() {
+      const energy = energyForDay();
+      const energyRadius = d3.scaleLinear().domain([10, 100]).range([116, 203]);
+      const radialLine = d3.lineRadial()
+        .angle(d => angle(d.hour + .5))
+        .radius(d => energyRadius(d.value))
+        .curve(d3.curveCardinalClosed.tension(.72));
+
+      auraPath.datum(energy)
+        .transition()
+        .duration(520)
+        .attr("d", radialLine);
+
+      rayLayer.selectAll(".solar-ray")
+        .data(energy, d => d.hour)
+        .join("line")
+        .attr("class", "solar-ray")
+        .attr("x1", d => rayPoint(d.hour, sunRadius + 20)[0])
+        .attr("y1", d => rayPoint(d.hour, sunRadius + 20)[1])
+        .attr("x2", d => rayPoint(d.hour, energyRadius(d.value))[0])
+        .attr("y2", d => rayPoint(d.hour, energyRadius(d.value))[1])
+        .attr("stroke", d => cyberpunkGradient((d.value - 10) / 90));
+
+      resetSunLabel();
+    }
 
     function key(d) {
       return `${d.day}-${d.start}-${d.end}-${d.activity}`;
     }
 
-    function filteredData(filter) {
-      return schedule
-        .filter(d => d.end > 0)
-        .filter(d => !filter.categories || filter.categories.includes(d.category));
+    function arcPath(d) {
+      return arcGenerator({
+        innerRadius: segmentInnerRadius,
+        outerRadius: segmentOuterRadius,
+        startAngle: angle(d.start),
+        endAngle: angle(d.end)
+      });
     }
 
-    function updateSchedule(filter) {
-      const currentData = filteredData(filter);
+    function updateSchedule() {
+      const currentData = schedule.filter(d => d.day === selectedDay)
+        .filter(d => !activeFilter.categories || activeFilter.categories.includes(d.category));
 
-      blockLayer.selectAll(".schedule-block")
+      arcLayer.selectAll(".schedule-arc")
         .data(currentData, key)
         .join(
-          enter => enter
-            .append("rect")
-            .attr("class", "schedule-block")
-            .attr("x", d => x(Math.max(d.start, 0)))
-            .attr("y", d => y(d.day))
-            .attr("width", d => Math.max(3, x(d.end) - x(Math.max(d.start, 0))))
-            .attr("height", y.bandwidth())
-            .attr("rx", 8)
-            .attr("ry", 8)
+          enter => enter.append("path")
+            .attr("class", "schedule-arc")
+            .attr("d", arcPath)
             .attr("fill", d => colors[d.category])
-            .attr("stroke", "rgba(246, 247, 255, 0.38)")
-            .attr("stroke-width", 0.7)
             .attr("opacity", 0)
-            .call(enter => enter.transition().duration(240).attr("opacity", 0.86)),
-          update => update
-            .call(update => update.transition().duration(240)
-              .attr("x", d => x(Math.max(d.start, 0)))
-              .attr("y", d => y(d.day))
-              .attr("width", d => Math.max(3, x(d.end) - x(Math.max(d.start, 0))))
-              .attr("height", y.bandwidth())
-              .attr("fill", d => colors[d.category])
-              .attr("opacity", 0.86)),
-          exit => exit
-            .call(exit => exit.transition().duration(180).attr("opacity", 0).remove())
+            .call(enter => enter.transition().duration(420).attr("opacity", .88)),
+          update => update.call(update => update.transition().duration(360)
+            .attr("d", arcPath)
+            .attr("fill", d => colors[d.category])
+            .attr("opacity", .88)),
+          exit => exit.call(exit => exit.transition().duration(240).attr("opacity", 0).remove())
         )
-        .on("mouseover", function(event, d) {
-          const hoverColor = d3.color(colors[d.category]).brighter(0.35).formatHex();
-          d3.select(this)
-            .raise()
-            .transition()
-            .duration(160)
-            .attr("fill", hoverColor)
-            .attr("y", y(d.day) - 2)
-            .attr("height", y.bandwidth() + 4)
-            .attr("opacity", 1);
-
-          tip.style("opacity", 1)
-            .html(`<strong>${d.activity}</strong><br>${d.day}<br>${formatHour(d.start)}-${formatHour(d.end)}<br>${d.category}`)
-            .style("left", `${event.offsetX + 12}px`)
-            .style("top", `${event.offsetY + 12}px`);
+        .on("mouseenter", function(event, d) {
+          d3.select(this).raise().attr("opacity", 1).attr("stroke", "#f6f7ff").attr("stroke-width", 2);
+          sunTitle.text(labelFor(d).slice(0, 12).toUpperCase());
+          sunSub.text(`${formatHour(d.start)}–${formatHour(d.end)}`);
+          tip.html(`<strong>${d.activity}</strong><small>${d.day} / ${formatHour(d.start)}–${formatHour(d.end)}</small><small>${d.category} · ${(d.end - d.start).toFixed(1)} hours</small>`)
+            .style("opacity", 1);
+          positionTooltip(event, tip, containerId);
         })
-        .on("mousemove", function(event) {
-          tip.style("left", `${event.offsetX + 12}px`)
-            .style("top", `${event.offsetY + 12}px`);
-        })
-        .on("mouseout", function(event, d) {
-          d3.select(this)
-            .transition()
-            .duration(160)
-            .attr("fill", colors[d.category])
-            .attr("y", y(d.day))
-            .attr("height", y.bandwidth())
-            .attr("opacity", 0.86);
+        .on("mousemove", event => positionTooltip(event, tip, containerId))
+        .on("mouseleave", function() {
+          d3.select(this).attr("opacity", .88).attr("stroke", "none");
+          resetSunLabel();
           tip.style("opacity", 0);
         });
-
-      labelLayer.selectAll(".schedule-label")
-        .data(currentData.filter(d => d.end - Math.max(d.start, 0) >= 1.8), key)
-        .join(
-          enter => enter
-            .append("text")
-            .attr("class", "schedule-label")
-            .attr("x", d => x(Math.max(d.start, 0)) + 5)
-            .attr("y", d => y(d.day) + y.bandwidth() / 2 + 4)
-            .style("font-size", "10px")
-            .style("font-weight", "700")
-            .style("fill", labelColor)
-            .style("pointer-events", "none")
-            .style("opacity", 0)
-            .text(labelFor)
-            .call(enter => enter.transition().duration(240).style("opacity", 1)),
-          update => update
-            .text(labelFor)
-            .call(update => update.transition().duration(240)
-              .attr("x", d => x(Math.max(d.start, 0)) + 5)
-              .attr("y", d => y(d.day) + y.bandwidth() / 2 + 4)
-              .style("opacity", 1)),
-          exit => exit
-            .call(exit => exit.transition().duration(180).style("opacity", 0).remove())
-        );
     }
 
-    svg.append("text")
-      .attr("x", width / 2)
-      .attr("y", -14)
-      .attr("text-anchor", "middle")
-      .style("font-size", "13px")
-      .style("font-weight", "700")
-      .text("A Typical Week, 00:00 to 02:00 Next Day");
-
-    updateSchedule(filters[0]);
+    updateSun();
+    updateSchedule();
   }
 
-  function drawEnergyHeatmap() {
-    const margin = { top: 34, right: 22, bottom: 48, left: 92 };
-    const cellSize = 26;
-    const hours = d3.range(0, 26);
-    const width = cellSize * hours.length;
-    const height = cellSize * days.length;
-    const tip = tooltip("#d3-container-3");
+  function drawCategorySummary() {
+    const containerId = "#d3-container-2";
+    const container = d3.select(containerId);
+    const tip = tooltip(containerId);
+    const width = 1000;
+    const height = 590;
+    const totals = d3.rollups(
+      schedule,
+      values => d3.sum(values, d => d.end - d.start),
+      d => d.category
+    ).map(([category, hours]) => ({ category, hours }));
 
-    const svg = d3.select("#d3-container-3")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .style("font-family", "'Roboto', sans-serif")
+    const svg = chartSvg(container, `0 0 ${width} ${height}`)
+      .attr("aria-label", "Packed constellation of weekly activity categories sized by total hours");
+
+    const field = svg.append("g").attr("class", "constellation-field");
+    [130, 220, 315, 410].forEach(function(radius, index) {
+      field.append("ellipse")
+        .attr("cx", width / 2)
+        .attr("cy", height / 2)
+        .attr("rx", radius)
+        .attr("ry", radius * .48)
+        .attr("class", `constellation-orbit orbit-${index}`);
+    });
+
+    field.append("line").attr("x1", 70).attr("x2", width - 70).attr("y1", height / 2).attr("y2", height / 2);
+    field.append("line").attr("x1", width / 2).attr("x2", width / 2).attr("y1", 40).attr("y2", height - 40);
+
+    const root = d3.pack()
+      .size([900, 520])
+      .padding(13)(d3.hierarchy({ children: totals }).sum(d => d.hours || 0));
+
+    const nodes = svg.append("g")
+      .attr("transform", "translate(50,35)")
+      .selectAll("g")
+      .data(root.leaves())
+      .enter()
       .append("g")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      .attr("class", "constellation-node")
+      .attr("transform", d => `translate(${d.x},${d.y})`)
+      .on("mouseenter", function(event, d) {
+        d3.select(this).raise().classed("is-active", true);
+        tip.html(`<strong>${d.data.category}</strong><small>${d.data.hours.toFixed(1)} hours per week</small>`)
+          .style("opacity", 1);
+        positionTooltip(event, tip, containerId);
+      })
+      .on("mousemove", event => positionTooltip(event, tip, containerId))
+      .on("mouseleave", function() {
+        d3.select(this).classed("is-active", false);
+        tip.style("opacity", 0);
+      });
+
+    nodes.append("circle")
+      .attr("class", "constellation-halo")
+      .attr("r", d => d.r + 5)
+      .attr("stroke", d => colors[d.data.category]);
+
+    nodes.append("circle")
+      .attr("class", "constellation-core")
+      .attr("r", d => d.r)
+      .attr("fill", d => colors[d.data.category]);
+
+    nodes.append("text")
+      .attr("class", "constellation-value")
+      .attr("text-anchor", "middle")
+      .attr("y", d => d.r > 31 ? -2 : 4)
+      .text(d => `${d.data.hours.toFixed(1)}h`);
+
+    nodes.filter(d => d.r > 31)
+      .append("text")
+      .attr("class", "constellation-label")
+      .attr("text-anchor", "middle")
+      .attr("y", 17)
+      .text(d => d.data.category.toUpperCase());
+  }
+
+  function drawEnergySignal() {
+    const containerId = "#d3-container-3";
+    const container = d3.select(containerId);
+    const tip = tooltip(containerId);
+    const width = 1000;
+    const height = 620;
+    const margin = { top: 38, right: 28, bottom: 54, left: 116 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+    const laneHeight = innerHeight / days.length;
+    const hours = d3.range(0, 26);
+    const x = d3.scaleLinear().domain([0, 25]).range([0, innerWidth]);
+    const amplitude = d3.scaleLinear().domain([10, 100]).range([5, laneHeight * .72]);
+    const signalColors = ["#00e5ff", "#ff2bd6", "#fff700", "#7a35ff", "#00ffb3", "#ff8a00", "#00a8ff"];
 
     const cells = [];
     days.forEach(day => {
@@ -393,151 +510,102 @@
       });
     });
 
-    const color = d3.scaleSequential(cyberpunkGradient).domain([10, 100]);
+    const svg = chartSvg(container, `0 0 ${width} ${height}`)
+      .attr("aria-label", "Seven daily energy waveforms across a 26 hour timeline");
+    const defs = svg.append("defs");
 
-    svg.selectAll(".energy-cell")
-      .data(cells)
+    signalColors.forEach(function(color, index) {
+      const gradient = defs.append("linearGradient")
+        .attr("id", `signal-gradient-${index}`)
+        .attr("x1", "0").attr("x2", "0").attr("y1", "0").attr("y2", "1");
+      gradient.append("stop").attr("offset", "0%").attr("stop-color", color).attr("stop-opacity", .72);
+      gradient.append("stop").attr("offset", "100%").attr("stop-color", color).attr("stop-opacity", .04);
+    });
+
+    const chart = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+    chart.selectAll(".signal-grid-line")
+      .data(d3.range(0, 26, 2))
       .enter()
-      .append("rect")
-      .attr("class", "energy-cell")
-      .attr("x", d => d.hour * cellSize)
-      .attr("y", d => days.indexOf(d.day) * cellSize)
-      .attr("width", cellSize - 1)
-      .attr("height", cellSize - 1)
-      .attr("fill", d => color(d.value))
-      .attr("stroke", "rgba(0, 229, 255, 0.18)")
-      .attr("stroke-width", 0.5)
-      .on("mouseover", function(event, d) {
-        d3.select(this).attr("stroke", "#00e5ff").attr("stroke-width", 1.5);
-        tip.style("opacity", 1)
-          .html(`<strong>${d.day}</strong><br>${formatHour(d.hour)}-${formatHour(d.hour + 1)}<br>${d.activity}<br>Energy score: ${d.value}`)
-          .style("left", `${event.offsetX + 12}px`)
-          .style("top", `${event.offsetY + 12}px`);
-      })
-      .on("mouseout", function() {
-        d3.select(this).attr("stroke", "rgba(0, 229, 255, 0.18)").attr("stroke-width", 0.5);
-        tip.style("opacity", 0);
-      });
+      .append("line")
+      .attr("class", "signal-grid-line")
+      .attr("x1", d => x(d))
+      .attr("x2", d => x(d))
+      .attr("y1", 0)
+      .attr("y2", innerHeight);
 
-    svg.append("g")
-      .selectAll("text")
-      .data(days)
+    chart.selectAll(".signal-hour")
+      .data(d3.range(0, 26, 2))
       .enter()
       .append("text")
-      .attr("x", -8)
-      .attr("y", (_, i) => i * cellSize + cellSize / 2 + 4)
-      .attr("text-anchor", "end")
-      .style("font-size", "12px")
-      .text(d => d);
-
-    svg.append("g")
-      .selectAll("text")
-      .data(hours.filter(h => h % 2 === 0))
-      .enter()
-      .append("text")
-      .attr("x", d => d * cellSize)
-      .attr("y", height + 20)
-      .style("font-size", "11px")
+      .attr("class", "signal-hour")
+      .attr("x", d => x(d))
+      .attr("y", innerHeight + 28)
+      .attr("text-anchor", "middle")
       .text(formatHour);
 
-    svg.append("text")
-      .attr("x", width / 2)
-      .attr("y", -14)
-      .attr("text-anchor", "middle")
-      .style("font-size", "13px")
-      .style("font-weight", "700")
-      .text("Hourly Energy and Pressure Across the Week");
-  }
+    days.forEach(function(day, dayIndex) {
+      const values = cells.filter(d => d.day === day);
+      const baseline = dayIndex * laneHeight + laneHeight * .82;
+      const line = d3.line()
+        .x(d => x(d.hour))
+        .y(d => baseline - amplitude(d.value))
+        .curve(d3.curveCatmullRom.alpha(.55));
+      const area = d3.area()
+        .x(d => x(d.hour))
+        .y0(baseline)
+        .y1(d => baseline - amplitude(d.value))
+        .curve(d3.curveCatmullRom.alpha(.55));
 
-  function drawCategorySummary() {
-    const totals = d3.rollups(
-      schedule,
-      values => d3.sum(values, d => d.end - d.start),
-      d => d.category
-    )
-      .map(([category, hours]) => ({ category, hours }))
-      .sort((a, b) => b.hours - a.hours);
+      chart.append("line")
+        .attr("class", "signal-baseline")
+        .attr("x1", 0).attr("x2", innerWidth)
+        .attr("y1", baseline).attr("y2", baseline);
 
-    const margin = { top: 34, right: 40, bottom: 36, left: 92 };
-    const width = 800 - margin.left - margin.right;
-    const height = 360 - margin.top - margin.bottom;
-    const tip = tooltip("#d3-container-2");
+      chart.append("text")
+        .attr("class", "signal-day")
+        .attr("x", -18)
+        .attr("y", baseline - 18)
+        .attr("text-anchor", "end")
+        .attr("fill", signalColors[dayIndex])
+        .text(day.toUpperCase());
 
-    const svg = d3.select("#d3-container-2")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .style("font-family", "'Roboto', sans-serif")
-      .append("g")
-      .attr("transform", `translate(${margin.left}, ${margin.top})`);
+      chart.append("path")
+        .datum(values)
+        .attr("class", "energy-area")
+        .attr("d", area)
+        .attr("fill", `url(#signal-gradient-${dayIndex})`);
 
-    const x = d3.scaleLinear()
-      .domain([0, d3.max(totals, d => d.hours)])
-      .nice()
-      .range([0, width]);
-    const y = d3.scaleBand()
-      .domain(totals.map(d => d.category))
-      .range([0, height])
-      .padding(0.22);
+      chart.append("path")
+        .datum(values)
+        .attr("class", "energy-wave")
+        .attr("d", line)
+        .attr("stroke", signalColors[dayIndex]);
 
-    svg.append("g")
-      .call(d3.axisLeft(y))
-      .selectAll("text")
-      .style("font-size", "12px");
-
-    svg.append("g")
-      .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(x).ticks(6).tickFormat(d => `${d}h`))
-      .selectAll("text")
-      .style("font-size", "11px");
-
-    svg.selectAll(".summary-bar")
-      .data(totals)
-      .enter()
-      .append("rect")
-      .attr("class", "summary-bar")
-      .attr("x", 0)
-      .attr("y", d => y(d.category))
-      .attr("width", d => x(d.hours))
-      .attr("height", y.bandwidth())
-      .attr("rx", 8)
-      .attr("ry", 8)
-      .attr("fill", d => colors[d.category])
-      .attr("stroke", "rgba(246, 247, 255, 0.38)")
-      .attr("stroke-width", 0.7)
-      .attr("opacity", 0.9)
-      .on("mouseover", function(event, d) {
-        d3.select(this).attr("opacity", 1);
-        tip.style("opacity", 1)
-          .html(`<strong>${d.category}</strong><br>${d.hours.toFixed(1)} hours per week`)
-          .style("left", `${event.offsetX + 12}px`)
-          .style("top", `${event.offsetY + 12}px`);
-      })
-      .on("mouseout", function() {
-        d3.select(this).attr("opacity", 0.9);
-        tip.style("opacity", 0);
-      });
-
-    svg.selectAll(".summary-label")
-      .data(totals)
-      .enter()
-      .append("text")
-      .attr("x", d => x(d.hours) + 6)
-      .attr("y", d => y(d.category) + y.bandwidth() / 2 + 4)
-      .style("font-size", "11px")
-      .style("fill", "#f6f7ff")
-      .text(d => `${d.hours.toFixed(1)}h`);
-
-    svg.append("text")
-      .attr("x", width / 2)
-      .attr("y", -14)
-      .attr("text-anchor", "middle")
-      .style("font-size", "13px")
-      .style("font-weight", "700")
-      .text("Total Hours by Weekly Activity Category");
+      chart.append("g")
+        .selectAll("circle")
+        .data(values)
+        .enter()
+        .append("circle")
+        .attr("class", "signal-hit")
+        .attr("cx", d => x(d.hour))
+        .attr("cy", d => baseline - amplitude(d.value))
+        .attr("r", 9)
+        .on("mouseenter", function(event, d) {
+          d3.select(this).classed("is-active", true);
+          tip.html(`<strong>${d.day} · ${formatHour(d.hour)}</strong><small>${d.activity}</small><small>Energy signal ${d.value} / 100</small>`)
+            .style("opacity", 1);
+          positionTooltip(event, tip, containerId);
+        })
+        .on("mousemove", event => positionTooltip(event, tip, containerId))
+        .on("mouseleave", function() {
+          d3.select(this).classed("is-active", false);
+          tip.style("opacity", 0);
+        });
+    });
   }
 
   drawSchedule();
-  drawEnergyHeatmap();
   drawCategorySummary();
+  drawEnergySignal();
 })();

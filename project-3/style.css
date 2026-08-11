@@ -118,6 +118,24 @@ h2 {
   line-height: 1.75;
 }
 
+.text-block .object-statement {
+  max-width: 900px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(0, 229, 255, .2);
+  color: var(--white);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.object-statement strong {
+  color: var(--orange);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
 .chart-description {
   margin: -7px 0 26px;
 }

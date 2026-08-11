@@ -60,6 +60,24 @@
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
 }
 
+.text-block .object-statement {
+  max-width: 940px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(0, 229, 255, .2);
+  color: var(--white);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.object-statement strong {
+  color: var(--orange);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
 @keyframes signal-pulse {
   0%, 100% { opacity: .88; }
   50% { opacity: 1; }

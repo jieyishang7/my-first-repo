@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple Canvases</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Orbitron:wght@500;700&amp;family=Roboto:wght@300;400;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+  <header>
+    <div class="left">Columbia GSAPP</div>
+    <div class="center">Computational Design Workflows<br><span>Exploration of Digital Objects</span></div>
+    <div class="right"><a href="../index.html">Back to Archive</a></div>
+  </header>
+
+  <div class="foreground-city" aria-hidden="true"></div>
+
+  <main>
+    <div class="project-meta">Digital Object · 2026</div>
+    <h1>Multiple Canvases</h1>
+    <div class="project-byline">Jay Shang · Computational Design Workflows</div>
+
+    <section class="project-introduction single-column">
+      <div class="text-block">
+        <h2>3D Studies</h2>
+        <p>Two Three.js scenes exploring light, depth, and spatial composition in 3D.</p>
+      </div>
+    </section>
+
+    <section class="canvas-panel">
+      <h2>Cyberpunk City Blocks</h2>
+      <p class="canvas-description">A navigable neon city composed of towers, illuminated windows, holographic signs, intersecting streets, traffic light trails, star particles, and floating hearts.</p>
+      <p class="object-statement"><strong>Statement.</strong> I used this exercise to construct an urban atmosphere from a limited set of Three.js primitives, asking how repeated boxes, planes, lights, and grids could read as a dense cyberpunk city. The scene combines fog, emissive windows, holographic signs, moving traffic signals, pulsing hearts, star particles, subtle building movement, and continuous rotation to create depth and activity without an external dataset. Orbit controls let viewers rotate, pan, and zoom through the model, shifting the work from a fixed image into an explorable city block.</p>
+      <div id="threejs-container-1" class="canvas-container"></div>
+    </section>
+
+    <section class="canvas-panel">
+      <h2>Atmospheric Geometry</h2>
+      <p class="canvas-description">An orbital field of UCLA and Columbia identity panels surrounding a neon energy core, animated rings, particles, and floating hearts.</p>
+      <p class="object-statement"><strong>Statement.</strong> I attempted to turn the institutional identities of UCLA and Columbia into spatial material rather than presenting them as flat graphic marks. Procedurally drawn school-name textures orbit a pulsing energy core with metallic panels, neon rings, particle light, and floating hearts, using each institution's recognizable colors and typographic character as the artistic reference. The panels continuously face the camera, while orbit controls allow viewers to rotate, pan, and zoom through the composition; no external dataset is used.</p>
+      <div id="threejs-container-3" class="canvas-container"></div>
+    </section>
+  </main>
+
+  <script src="3d-primitive.js"></script>
+  <script src="atmospheric-geometry.js"></script>
+</body>
+</html>
